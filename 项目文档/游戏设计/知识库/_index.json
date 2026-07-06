@@ -1,0 +1,2816 @@
+{
+  "description": "知识库索引（由 脚本/generate_index.py 自动生成）",
+  "generated_at": "2026-06-09T06:29:03.031370",
+  "total_articles": 160,
+  "articles": [
+    {
+      "path": "AI代理技术/00-目录.md",
+      "title": "AI 代理技术目录",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 739
+    },
+    {
+      "path": "AI代理技术/1-ReAct推理行动协同.md",
+      "title": "ReAct 推理行动协同",
+      "desc": "",
+      "tags": [
+        "ai-agent",
+        "reasoning",
+        "action-synergy"
+      ],
+      "created": "2026-06-09",
+      "status": "draft",
+      "size": 1099
+    },
+    {
+      "path": "AI代理技术/2-Chain-of-Thought.md",
+      "title": "Chain-of-Thought 逐步推理",
+      "desc": "",
+      "tags": [
+        "ai-agent",
+        "reasoning",
+        "prompt-pattern"
+      ],
+      "created": "2026-06-09",
+      "status": "draft",
+      "size": 1187
+    },
+    {
+      "path": "AI代理技术/3-Reflexion自我反思.md",
+      "title": "Reflexion 自我反思",
+      "desc": "",
+      "tags": [
+        "ai-agent",
+        "self-improvement",
+        "reflection"
+      ],
+      "created": "2026-06-09",
+      "status": "draft",
+      "size": 1223
+    },
+    {
+      "path": "AI代理技术/4-Self-Refine自改进.md",
+      "title": "Self-Refine 自改进",
+      "desc": "",
+      "tags": [
+        "ai-agent",
+        "self-improvement",
+        "feedback-loop"
+      ],
+      "created": "2026-06-09",
+      "status": "draft",
+      "size": 1469
+    },
+    {
+      "path": "AI代理技术/5-Ctx2Skill上下文技能提取.md",
+      "title": "Ctx2Skill 上下文技能提取",
+      "desc": "",
+      "tags": [
+        "ai-agent",
+        "skill-acquisition",
+        "context-mining"
+      ],
+      "created": "2026-06-09",
+      "status": "draft",
+      "size": 948
+    },
+    {
+      "path": "UI设计理论/01-游戏UI设计原则.md",
+      "title": "游戏UI设计原则",
+      "desc": "",
+      "tags": [
+        "ui-design",
+        "game-mechanics",
+        "player-psychology"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 3903
+    },
+    {
+      "path": "UI设计理论/02-HUD信息架构.md",
+      "title": "HUD信息架构与视觉层次",
+      "desc": "",
+      "tags": [
+        "hud",
+        "ui-design",
+        "flow",
+        "rhythm"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 4719
+    },
+    {
+      "path": "UI设计理论/03-交互反馈与动效设计.md",
+      "title": "交互反馈与动效设计",
+      "desc": "",
+      "tags": [
+        "interaction-feedback",
+        "ui-design",
+        "game-mechanics",
+        "reinforcement"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 4483
+    },
+    {
+      "path": "UI设计理论/04-游戏UX评估方法.md",
+      "title": "游戏UX评估方法",
+      "desc": "",
+      "tags": [
+        "ux-evaluation",
+        "ui-design",
+        "methodology"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 4976
+    },
+    {
+      "path": "UI设计理论/05-状态呈现设计.md",
+      "title": "状态呈现设计",
+      "desc": "",
+      "tags": [
+        "ui-design",
+        "hud",
+        "game-mechanics",
+        "boss-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 4181
+    },
+    {
+      "path": "UI设计理论/06-菜单与元UI设计.md",
+      "title": "菜单与元UI设计",
+      "desc": "",
+      "tags": [
+        "ui-design",
+        "game-mechanics",
+        "card-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 4459
+    },
+    {
+      "path": "UI设计理论/07-DiegeticUI与叙事界面.md",
+      "title": "Diegetic UI 与叙事界面设计",
+      "desc": "",
+      "tags": [
+        "diegetic-ui",
+        "ui-design",
+        "narrative"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 4619
+    },
+    {
+      "path": "UI设计理论/08-女神异闻录5UI设计分析.md",
+      "title": "女神异闻录5 UI设计分析",
+      "desc": "",
+      "tags": [
+        "ui-design",
+        "diegetic-ui",
+        "narrative",
+        "interaction-feedback",
+        "case-study"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 4635
+    },
+    {
+      "path": "UI设计理论/09-旷野之息UI设计分析.md",
+      "title": "塞尔达传说：旷野之息 UI 设计分析",
+      "desc": "",
+      "tags": [
+        "ui-design",
+        "hud",
+        "spatial-ui",
+        "diegetic-ui",
+        "emergence",
+        "case-study"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 7089
+    },
+    {
+      "path": "UI设计理论/10-HadesUI设计分析.md",
+      "title": "Hades UI 设计分析",
+      "desc": "",
+      "tags": [
+        "ui-design",
+        "interaction-feedback",
+        "case-study",
+        "game-mechanics",
+        "roguelite"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 7109
+    },
+    {
+      "path": "UI设计理论/11-操作映射与手感设计.md",
+      "title": "操作映射与手感设计",
+      "desc": "",
+      "tags": [
+        "control-mapping",
+        "ui-design",
+        "game-mechanics"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 6097
+    },
+    {
+      "path": "更新日志.md",
+      "title": "知识库更新日志",
+      "desc": "",
+      "tags": [
+        "meta",
+        "changelog"
+      ],
+      "created": "2026-06-01",
+      "status": "verified",
+      "size": 6887
+    },
+    {
+      "path": "柒星报告/2026-06-08--2026-06-08.md",
+      "title": "柒星报告 · 2026-06-08 ~ 2026-06-08",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 1633
+    },
+    {
+      "path": "游戏设计理论/00-总览与阅读导引.md",
+      "title": "游戏设计知识库 — 总览与阅读导引",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 3464
+    },
+    {
+      "path": "游戏设计理论/01-核心概念与思维模型.md",
+      "title": "01 — 核心概念与思维模型（精简版）",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 1100
+    },
+    {
+      "path": "游戏设计理论/02-玩家心理学.md",
+      "title": "02 — 玩家心理学",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 15713
+    },
+    {
+      "path": "游戏设计理论/03-游戏机制设计技法.md",
+      "title": "03 — 游戏机制设计技法",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 21486
+    },
+    {
+      "path": "游戏设计理论/04-游戏节奏与心流设计.md",
+      "title": "04 — 游戏节奏与心流设计",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 8730
+    },
+    {
+      "path": "游戏设计理论/05-叙事设计.md",
+      "title": "05 — 叙事设计",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 10062
+    },
+    {
+      "path": "游戏设计理论/06-附录：原文出处索引.md",
+      "title": "06 — 附录：原文出处索引",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 5286
+    },
+    {
+      "path": "游戏设计理论/_存档/01-核心概念与思维模型_完整版.md",
+      "title": "01 — 核心概念与思维模型",
+      "desc": "",
+      "tags": [
+        "design-philosophy",
+        "theory"
+      ],
+      "created": "2026-05-24",
+      "status": "draft",
+      "size": 11735
+    },
+    {
+      "path": "游戏设计理论/_存档/02-玩家心理学_完整版.md",
+      "title": "02 — 玩家心理学",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "theory"
+      ],
+      "created": "2026-05-24",
+      "status": "draft",
+      "size": 15808
+    },
+    {
+      "path": "游戏设计理论/_存档/03-游戏机制设计技法_完整版.md",
+      "title": "03 — 游戏机制设计技法",
+      "desc": "",
+      "tags": [
+        "game-mechanics",
+        "theory"
+      ],
+      "created": "2026-05-24",
+      "status": "draft",
+      "size": 21581
+    },
+    {
+      "path": "游戏设计理论/_存档/04-游戏节奏与心流设计_完整版.md",
+      "title": "04 — 游戏节奏与心流设计",
+      "desc": "",
+      "tags": [
+        "flow",
+        "rhythm",
+        "theory"
+      ],
+      "created": "2026-05-24",
+      "status": "draft",
+      "size": 8824
+    },
+    {
+      "path": "游戏设计理论/_存档/05-叙事设计_完整版.md",
+      "title": "05 — 叙事设计",
+      "desc": "",
+      "tags": [
+        "narrative",
+        "theory"
+      ],
+      "created": "2026-05-24",
+      "status": "draft",
+      "size": 10148
+    },
+    {
+      "path": "游戏设计理论/_存档/通用知识库索引.md",
+      "title": "通用知识库 - L2 索引",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 528
+    },
+    {
+      "path": "游戏设计理论/归纳文档/01-设计哲学：父系与母系思维.md",
+      "title": "设计哲学：父系与母系思维",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 2016
+    },
+    {
+      "path": "游戏设计理论/归纳文档/02-玩家心理学与行为模型.md",
+      "title": "玩家心理学与行为模型",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 1949
+    },
+    {
+      "path": "游戏设计理论/归纳文档/03-心流与游戏节奏设计.md",
+      "title": "心流与游戏节奏设计",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 2290
+    },
+    {
+      "path": "游戏设计理论/归纳文档/04-快乐总量与正反馈技法.md",
+      "title": "快乐总量与正反馈技法",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 4490
+    },
+    {
+      "path": "游戏设计理论/归纳文档/05-涌现式与系统交互设计.md",
+      "title": "涌现式与系统交互设计",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 1512
+    },
+    {
+      "path": "游戏设计理论/归纳文档/06-游戏叙事与投影设计.md",
+      "title": "游戏叙事与投影设计",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 1900
+    },
+    {
+      "path": "游戏设计理论/游戏设计知识测试卷.md",
+      "title": "游戏设计知识 — 综合测试卷",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 2620
+    },
+    {
+      "path": "理论知识/01-Roguelike设计规范.md",
+      "title": "Roguelike设计规范",
+      "desc": "",
+      "tags": [
+        "roguelike",
+        "game-design",
+        "procedural-generation",
+        "player-psychology",
+        "reinforcement"
+      ],
+      "created": "2026-06-01",
+      "status": "verified",
+      "size": 5501
+    },
+    {
+      "path": "理论知识/02-The Bazaar设计分析.md",
+      "title": "The Bazaar（大巴扎）设计分析",
+      "desc": "",
+      "tags": [
+        "the-bazaar",
+        "card-design",
+        "roguelite",
+        "pvp",
+        "auto-battler",
+        "game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 6882
+    },
+    {
+      "path": "理论知识/03-创造性表达.md",
+      "title": "创造性表达",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "expression"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 469
+    },
+    {
+      "path": "理论知识/04-叠层设计与延迟满足.md",
+      "title": "叠层设计与延迟满足",
+      "desc": "",
+      "tags": [
+        "reinforcement",
+        "happiness-total"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 1558
+    },
+    {
+      "path": "理论知识/05-额外挑战与及格线.md",
+      "title": "额外挑战与及格线",
+      "desc": "",
+      "tags": [
+        "difficulty",
+        "player-psychology"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 623
+    },
+    {
+      "path": "理论知识/06-反思设计法.md",
+      "title": "反思设计法——从0开始的设计流程",
+      "desc": "",
+      "tags": [
+        "design-process",
+        "methodology",
+        "game-design",
+        "design-thinking"
+      ],
+      "created": "2026-06-01",
+      "status": "verified",
+      "size": 1155
+    },
+    {
+      "path": "理论知识/07-分段奖励设计.md",
+      "title": "分段奖励设计",
+      "desc": "",
+      "tags": [
+        "reward-design",
+        "player-psychology",
+        "happiness-total"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 1485
+    },
+    {
+      "path": "理论知识/08-父系与母系设计哲学.md",
+      "title": "父系与母系设计哲学",
+      "desc": "",
+      "tags": [
+        "design-philosophy"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 1113
+    },
+    {
+      "path": "理论知识/09-过度理由效应.md",
+      "title": "过度理由效应",
+      "desc": "",
+      "tags": [
+        "player-psychology"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 560
+    },
+    {
+      "path": "理论知识/10-宏观层与微观层叙事.md",
+      "title": "宏观层与微观层叙事",
+      "desc": "",
+      "tags": [
+        "narrative",
+        "system-interaction"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 603
+    },
+    {
+      "path": "理论知识/11-机制轴设计方法.md",
+      "title": "机制轴设计方法",
+      "desc": "",
+      "tags": [
+        "game-mechanics",
+        "emergence",
+        "system-interaction"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 1787
+    },
+    {
+      "path": "理论知识/12-减法设计.md",
+      "title": "减法设计",
+      "desc": "",
+      "tags": [
+        "subtraction-design",
+        "design-philosophy",
+        "game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "verified",
+      "size": 2480
+    },
+    {
+      "path": "理论知识/13-渐进式生成.md",
+      "title": "渐进式生成",
+      "desc": "",
+      "tags": [
+        "procedural-gen"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 593
+    },
+    {
+      "path": "理论知识/14-渐进式生成内容设计.md",
+      "title": "渐进式生成内容设计",
+      "desc": "",
+      "tags": [
+        "procedural-generation",
+        "open-world",
+        "game-design",
+        "content-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 1651
+    },
+    {
+      "path": "理论知识/15-精准操作设计.md",
+      "title": "精准操作设计",
+      "desc": "",
+      "tags": [
+        "mechanics",
+        "player-skill"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 583
+    },
+    {
+      "path": "理论知识/16-卡牌设计规范.md",
+      "title": "卡牌设计规范",
+      "desc": "",
+      "tags": [
+        "card-design",
+        "game-design",
+        "card-game"
+      ],
+      "created": "2026-06-01",
+      "status": "verified",
+      "size": 4427
+    },
+    {
+      "path": "理论知识/17-快车道设计.md",
+      "title": "快车道设计",
+      "desc": "",
+      "tags": [
+        "quick-lane",
+        "happiness-total"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 486
+    },
+    {
+      "path": "理论知识/18-快乐总量.md",
+      "title": "快乐总量",
+      "desc": "",
+      "tags": [
+        "happiness-total"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 845
+    },
+    {
+      "path": "理论知识/19-浪费规避设计.md",
+      "title": "浪费规避设计",
+      "desc": "",
+      "tags": [
+        "waste-avoidance",
+        "player-psychology"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 507
+    },
+    {
+      "path": "理论知识/20-难度调节方案.md",
+      "title": "难度调节方案",
+      "desc": "",
+      "tags": [
+        "difficulty",
+        "flow"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 710
+    },
+    {
+      "path": "理论知识/21-驱动力模型.md",
+      "title": "驱动力模型",
+      "desc": "",
+      "tags": [
+        "player-psychology"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 2658
+    },
+    {
+      "path": "理论知识/22-权力下放设计.md",
+      "title": "权力下放设计",
+      "desc": "",
+      "tags": [
+        "empowerment",
+        "player-psychology"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 1609
+    },
+    {
+      "path": "理论知识/23-热奈特三分法.md",
+      "title": "热奈特三分法——叙事分析框架",
+      "desc": "",
+      "tags": [
+        "narrative",
+        "narratology",
+        "game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "verified",
+      "size": 1645
+    },
+    {
+      "path": "理论知识/24-三端分工设计.md",
+      "title": "三端分工设计",
+      "desc": "",
+      "tags": [
+        "game-architecture",
+        "system-interaction",
+        "game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 1733
+    },
+    {
+      "path": "理论知识/25-杀戮尖塔卡牌设计分析.md",
+      "title": "杀戮尖塔卡牌设计分析",
+      "desc": "",
+      "tags": [
+        "slay-the-spire",
+        "card-design",
+        "roguelite",
+        "dbg",
+        "game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 7924
+    },
+    {
+      "path": "理论知识/26-双轨收益与强化程式.md",
+      "title": "双轨收益与强化程式",
+      "desc": "",
+      "tags": [
+        "reinforcement",
+        "player-psychology"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 631
+    },
+    {
+      "path": "理论知识/27-他者确认与社交反馈.md",
+      "title": "他者确认与社交反馈",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "social"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 488
+    },
+    {
+      "path": "理论知识/28-体验4X.md",
+      "title": "体验4X",
+      "desc": "",
+      "tags": [
+        "experience-4x"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 508
+    },
+    {
+      "path": "理论知识/29-体验图分析框架.md",
+      "title": "体验图——游戏体验多样性分析框架",
+      "desc": "",
+      "tags": [
+        "experience-graph",
+        "game-analysis",
+        "game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "verified",
+      "size": 1208
+    },
+    {
+      "path": "理论知识/30-投篮效应.md",
+      "title": "投篮效应",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "randomness"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 504
+    },
+    {
+      "path": "理论知识/31-玩家投影与游戏肌理.md",
+      "title": "玩家投影与游戏肌理",
+      "desc": "",
+      "tags": [
+        "narrative"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 694
+    },
+    {
+      "path": "理论知识/32-玩具系统.md",
+      "title": "玩具系统",
+      "desc": "",
+      "tags": [
+        "toy-system",
+        "player-psychology"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 567
+    },
+    {
+      "path": "理论知识/33-无效进程与三层乐趣体系.md",
+      "title": "无效进程与三层乐趣体系",
+      "desc": "",
+      "tags": [
+        "invalid-process",
+        "happiness-total"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 728
+    },
+    {
+      "path": "理论知识/34-系统交互与体验调节.md",
+      "title": "系统交互与体验调节",
+      "desc": "",
+      "tags": [
+        "system-interaction",
+        "player-psychology"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 887
+    },
+    {
+      "path": "理论知识/35-协同效应.md",
+      "title": "协同效应",
+      "desc": "",
+      "tags": [
+        "synergy",
+        "system-interaction"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 1259
+    },
+    {
+      "path": "理论知识/36-心流通道.md",
+      "title": "心流通道",
+      "desc": "",
+      "tags": [
+        "flow",
+        "rhythm"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 670
+    },
+    {
+      "path": "理论知识/37-信号与强化体系.md",
+      "title": "信号与强化体系",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "reinforcement"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 2116
+    },
+    {
+      "path": "理论知识/38-叙事中的父系结构设计.md",
+      "title": "叙事中的父系结构设计",
+      "desc": "",
+      "tags": [
+        "narrative",
+        "design-philosophy"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 568
+    },
+    {
+      "path": "理论知识/39-学习与遗忘曲线.md",
+      "title": "学习与遗忘曲线",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "design-philosophy"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 1232
+    },
+    {
+      "path": "理论知识/40-英雄设计三规范.md",
+      "title": "电竞教父——英雄设计三规范",
+      "desc": "",
+      "tags": [
+        "hero-design",
+        "moba",
+        "game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 766
+    },
+    {
+      "path": "理论知识/41-涌现式设计.md",
+      "title": "涌现式设计",
+      "desc": "",
+      "tags": [
+        "emergence",
+        "system-interaction"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 943
+    },
+    {
+      "path": "理论知识/42-游戏化叙事.md",
+      "title": "游戏化叙事",
+      "desc": "",
+      "tags": [
+        "narrative"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 640
+    },
+    {
+      "path": "理论知识/43-游戏节奏设计.md",
+      "title": "游戏节奏设计",
+      "desc": "",
+      "tags": [
+        "rhythm",
+        "flow"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 596
+    },
+    {
+      "path": "理论知识/44-游戏平衡性设计.md",
+      "title": "游戏平衡性设计",
+      "desc": "",
+      "tags": [
+        "balance",
+        "game-design",
+        "competitive"
+      ],
+      "created": "2026-06-01",
+      "status": "verified",
+      "size": 1746
+    },
+    {
+      "path": "理论知识/45-增量游戏设计.md",
+      "title": "增量游戏（Incremental Game）设计 | 草稿",
+      "desc": "",
+      "tags": [
+        "incremental-game",
+        "game-design",
+        "core-loop",
+        "operant-conditioning",
+        "player-psychology"
+      ],
+      "created": "2026-06-01",
+      "status": "verified",
+      "size": 4131
+    },
+    {
+      "path": "理论知识/46-正反馈与负反馈循环.md",
+      "title": "正反馈与负反馈循环",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "reinforcement"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 926
+    },
+    {
+      "path": "理论知识/47-自然创作观.md",
+      "title": "自然创作观",
+      "desc": "",
+      "tags": [
+        "design-philosophy",
+        "creativity",
+        "game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "verified",
+      "size": 1561
+    },
+    {
+      "path": "理论知识/48-自我决定理论SDT.md",
+      "title": "自我决定理论（SDT）",
+      "desc": "",
+      "tags": [
+        "player-psychology"
+      ],
+      "created": "2026-05-24",
+      "status": "verified",
+      "size": 803
+    },
+    {
+      "path": "理论知识/49-Auto-Battler品类定义与设计历史.md",
+      "title": "Auto-Battler（自走棋）品类定义与设计历史",
+      "desc": "",
+      "tags": [
+        "auto-battler",
+        "game-design",
+        "genre-history"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 3856
+    },
+    {
+      "path": "理论知识/50-自走棋商店与刷新机制设计.md",
+      "title": "自走棋商店与刷新机制设计",
+      "desc": "",
+      "tags": [
+        "auto-battler",
+        "economy",
+        "game-mechanics",
+        "card-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 4404
+    },
+    {
+      "path": "理论知识/51-自走棋经济系统设计.md",
+      "title": "自走棋经济系统设计",
+      "desc": "",
+      "tags": [
+        "auto-battler",
+        "economy",
+        "game-design",
+        "system-interaction"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 4470
+    },
+    {
+      "path": "理论知识/52-自走棋棋盘站位与战斗系统.md",
+      "title": "自走棋棋盘站位与战斗系统设计",
+      "desc": "",
+      "tags": [
+        "auto-battler",
+        "combat",
+        "system-interaction",
+        "game-mechanics"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 5751
+    },
+    {
+      "path": "理论知识/53-自走棋协同机制设计.md",
+      "title": "自走棋协同机制设计",
+      "desc": "",
+      "tags": [
+        "auto-battler",
+        "synergy",
+        "game-mechanics",
+        "system-interaction"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 4826
+    },
+    {
+      "path": "理论知识/54-上田文人设计哲学.md",
+      "title": "上田文人设计哲学",
+      "desc": "",
+      "tags": [
+        "design-philosophy",
+        "case-study",
+        "japanese-game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 3289
+    },
+    {
+      "path": "理论知识/55-上田文人三部曲作品分析.md",
+      "title": "上田文人三部曲作品分析",
+      "desc": "",
+      "tags": [
+        "case-study",
+        "game-analysis",
+        "design-philosophy",
+        "japanese-game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 4325
+    },
+    {
+      "path": "理论知识/56-上田文人的影响与传承.md",
+      "title": "上田文人的影响与传承",
+      "desc": "",
+      "tags": [
+        "case-study",
+        "design-philosophy",
+        "game-analysis",
+        "japanese-game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 3137
+    },
+    {
+      "path": "理论知识/57-游戏设计的三个终极问题.md",
+      "title": "游戏设计的三个终极问题",
+      "desc": "",
+      "tags": [
+        "design-philosophy",
+        "methodology",
+        "game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 1447
+    },
+    {
+      "path": "理论知识/58-去显性选择设计方法.md",
+      "title": "去显性选择设计方法",
+      "desc": "",
+      "tags": [
+        "game-mechanics",
+        "design-philosophy",
+        "player-psychology",
+        "empowerment"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 2056
+    },
+    {
+      "path": "理论知识/59-游戏性的谱系.md",
+      "title": "游戏性的谱系",
+      "desc": "",
+      "tags": [
+        "game-design",
+        "player-psychology",
+        "methodology",
+        "design-philosophy"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 1639
+    },
+    {
+      "path": "理论知识/60-去目标化指引设计.md",
+      "title": "去目标化指引设计",
+      "desc": "",
+      "tags": [
+        "game-mechanics",
+        "empowerment",
+        "design-philosophy",
+        "flow",
+        "open-world"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 2030
+    },
+    {
+      "path": "理论知识/61-规范与偏离规范.md",
+      "title": "规范与偏离规范",
+      "desc": "",
+      "tags": [
+        "design-philosophy",
+        "methodology",
+        "creativity",
+        "case-study"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 1909
+    },
+    {
+      "path": "理论知识/62-耶克斯-多德森定律.md",
+      "title": "耶克斯-多德森定律（Yerkes-Dodson Law）",
+      "desc": "",
+      "tags": [
+        "flow",
+        "rhythm",
+        "player-psychology"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 2225
+    },
+    {
+      "path": "理论知识/63-峰终定律.md",
+      "title": "峰终定律（Peak-End Rule）",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "happiness-total",
+        "experience-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 2367
+    },
+    {
+      "path": "理论知识/64-前景理论.md",
+      "title": "前景理论（Prospect Theory）",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "cognitive-bias",
+        "decision-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 2540
+    },
+    {
+      "path": "理论知识/65-MDA框架.md",
+      "title": "MDA框架（Mechanics-Dynamics-Aesthetics）",
+      "desc": "",
+      "tags": [
+        "design-philosophy",
+        "methodology",
+        "analysis-framework"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 2799
+    },
+    {
+      "path": "理论知识/66-格式塔心理学.md",
+      "title": "格式塔心理学（Gestalt Psychology）",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "ui-design",
+        "perception",
+        "cognitive-bias"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 1986
+    },
+    {
+      "path": "理论知识/67-DDA动态难度调节.md",
+      "title": "DDA动态难度调节（Dynamic Difficulty Adjustment）",
+      "desc": "",
+      "tags": [
+        "difficulty",
+        "flow",
+        "player-psychology",
+        "system-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 3293
+    },
+    {
+      "path": "理论知识/68-可供性理论.md",
+      "title": "可供性理论（Affordance Theory）",
+      "desc": "",
+      "tags": [
+        "ui-design",
+        "player-psychology",
+        "perception",
+        "interaction-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 2114
+    },
+    {
+      "path": "理论知识/69-强制循环.md",
+      "title": "强制循环（Compulsion Loop）",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "reinforcement",
+        "core-loop",
+        "game-mechanics"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 3615
+    },
+    {
+      "path": "理论知识/70-背包乱斗单位设计.md",
+      "title": "背包乱斗（Backpack Battle）单位设计",
+      "desc": "",
+      "tags": [
+        "auto-battler",
+        "game-design",
+        "inventory-management",
+        "case-study"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 8479
+    },
+    {
+      "path": "理论知识/71-背包英雄单位设计.md",
+      "title": "背包英雄（Backpack Hero）单位设计",
+      "desc": "",
+      "tags": [
+        "auto-battler",
+        "game-design",
+        "inventory-management",
+        "roguelite",
+        "case-study"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 8744
+    },
+    {
+      "path": "理论知识/72-输入随机与输出随机.md",
+      "title": "输入随机与输出随机（Input vs Output Randomness）",
+      "desc": "",
+      "tags": [
+        "randomness",
+        "design-framework",
+        "player-psychology"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 3465
+    },
+    {
+      "path": "理论知识/73-伪随机分布PRD.md",
+      "title": "伪随机分布（Pseudo-Random Distribution / PRD）",
+      "desc": "",
+      "tags": [
+        "randomness",
+        "probability",
+        "system-design",
+        "mechanics"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 4260
+    },
+    {
+      "path": "理论知识/74-确定性vs随机性掉落设计.md",
+      "title": "确定性 vs 随机性掉落设计",
+      "desc": "",
+      "tags": [
+        "randomness",
+        "loot-design",
+        "player-psychology",
+        "system-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 3710
+    },
+    {
+      "path": "理论知识/75-心理力学模型.md",
+      "title": "心理力学模型（Psychomechanics）",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "motivation",
+        "behavior-change"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 4528
+    },
+    {
+      "path": "理论知识/76-认知评价理论CET.md",
+      "title": "认知评价理论（Cognitive Evaluation Theory, CET）",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "motivation",
+        "self-determination-theory"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 3530
+    },
+    {
+      "path": "理论知识/77-规则变异设计.md",
+      "title": "规则变异设计——Roguelite局外成长的替代方案",
+      "desc": "",
+      "tags": [
+        "roguelite",
+        "metaprogression",
+        "player-psychology",
+        "reinforcement",
+        "design-pattern"
+      ],
+      "created": "2026-06-03",
+      "status": "draft",
+      "size": 3769
+    },
+    {
+      "path": "理论知识/78-CRPG角色与系统设计.md",
+      "title": "CRPG角色与系统设计——角色/职业/技能与系统架构",
+      "desc": "",
+      "tags": [
+        "crpg",
+        "character-design",
+        "class-design",
+        "skill-system",
+        "game-architecture",
+        "rpg"
+      ],
+      "created": "2026-06-03",
+      "status": "draft",
+      "size": 5805
+    },
+    {
+      "path": "理论知识/79-相对最优解与三层变化模型.md",
+      "title": "相对最优解与三层变化模型——Roguelike决策设计的底层逻辑",
+      "desc": "",
+      "tags": [
+        "decision-design",
+        "optimal-solution",
+        "roguelike",
+        "emergence",
+        "player-psychology",
+        "game-analysis"
+      ],
+      "created": "2026-06-03",
+      "status": "draft",
+      "size": 9771
+    },
+    {
+      "path": "理论知识/80-快乐密度的进程边界.md",
+      "title": "快乐密度的进程边界——快乐总量/进程 的最佳区间",
+      "desc": "",
+      "tags": [
+        "happiness-density",
+        "game-design",
+        "process-design",
+        "player-experience"
+      ],
+      "created": "2026-06-03",
+      "status": "draft",
+      "size": 1281
+    },
+    {
+      "path": "理论知识/81-从快乐出发的设计方法论.md",
+      "title": "快乐优先设计原则——先保证快乐总量，再压缩无效进程",
+      "desc": "",
+      "tags": [
+        "design-methodology",
+        "happiness-density",
+        "process-design",
+        "lesson-learned"
+      ],
+      "created": "2026-06-03",
+      "status": "draft",
+      "size": 1135
+    },
+    {
+      "path": "理论知识/82-爬行者体系.md",
+      "title": "爬行者体系——即时正反馈循环设计模型",
+      "desc": "",
+      "tags": [
+        "decision-design",
+        "feedback-loop",
+        "player-psychology",
+        "game-mechanics",
+        "happiness-total"
+      ],
+      "created": "2026-06-03",
+      "status": "verified",
+      "size": 7544
+    },
+    {
+      "path": "理论知识/82-费用即时间代价的卡牌经济模型.md",
+      "title": "费用即时间代价的卡牌经济模型",
+      "desc": "",
+      "tags": [
+        "card-design",
+        "game-design",
+        "card-game",
+        "flow",
+        "rhythm"
+      ],
+      "created": "2026-06-04",
+      "status": "draft",
+      "size": 3094
+    },
+    {
+      "path": "理论知识/83-MUD玩家四分类.md",
+      "title": "MUD 玩家四分类——红桃·方块·梅花·黑桃",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "player-types",
+        "game-design",
+        "mud"
+      ],
+      "created": "2026-06-03",
+      "status": "draft",
+      "size": 5333
+    },
+    {
+      "path": "理论知识/83-手牌重置与构筑规划的张力模型.md",
+      "title": "手牌重置与构筑规划的张力模型",
+      "desc": "",
+      "tags": [
+        "card-design",
+        "game-design",
+        "card-game",
+        "player-psychology",
+        "decision-design"
+      ],
+      "created": "2026-06-04",
+      "status": "draft",
+      "size": 5068
+    },
+    {
+      "path": "理论知识/84-单次检定最优概率80%.md",
+      "title": "单次检定最优概率（80%法则）",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "probability",
+        "game-mechanics",
+        "dice-roll",
+        "game-balance"
+      ],
+      "created": "2026-06-03",
+      "status": "draft",
+      "size": 3472
+    },
+    {
+      "path": "理论知识/84-外线反效率优化设计原则.md",
+      "title": "外线反效率优化设计原则",
+      "desc": "",
+      "tags": [
+        "base-building",
+        "game-design",
+        "player-psychology",
+        "metaprogression",
+        "system-interaction"
+      ],
+      "created": "2026-06-04",
+      "status": "draft",
+      "size": 3084
+    },
+    {
+      "path": "理论知识/85-可选回合制设计.md",
+      "title": "可选回合制设计",
+      "desc": "",
+      "tags": [
+        "game-design",
+        "flow",
+        "rhythm",
+        "player-psychology"
+      ],
+      "created": "2026-06-04",
+      "status": "draft",
+      "size": 7567
+    },
+    {
+      "path": "理论知识/85-高潮落差理论.md",
+      "title": "高潮落差理论——情绪曲线的设计核心",
+      "desc": "",
+      "tags": [
+        "narrative",
+        "player-psychology",
+        "game-rhythm",
+        "emotional-design",
+        "peak-end-rule"
+      ],
+      "created": "2026-06-03",
+      "status": "draft",
+      "size": 3317
+    },
+    {
+      "path": "理论知识/86-玩家不尊重NPC的原因.md",
+      "title": "玩家不尊重 NPC 的原因——邂逅设计与人际情感",
+      "desc": "",
+      "tags": [
+        "narrative",
+        "player-psychology",
+        "npc-design",
+        "social-interaction",
+        "game-design"
+      ],
+      "created": "2026-06-03",
+      "status": "draft",
+      "size": 3237
+    },
+    {
+      "path": "理论知识/87-显示概率产生倾向.md",
+      "title": "显示概率产生倾向——概率信息对玩家心理的影响",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "probability",
+        "game-mechanics",
+        "decision-design",
+        "feedback"
+      ],
+      "created": "2026-06-03",
+      "status": "draft",
+      "size": 3960
+    },
+    {
+      "path": "理论知识/88-任务列表与Checklist游戏设计.md",
+      "title": "任务列表与Checklist游戏设计——旧范式诊断与批判",
+      "desc": "",
+      "tags": [
+        "quest-design",
+        "checklist",
+        "game-design",
+        "player-psychology",
+        "task-management",
+        "progression"
+      ],
+      "created": "2026-06-05",
+      "status": "draft",
+      "size": 24838
+    },
+    {
+      "path": "理论知识/89-网状系统游戏设计——后Checklist时代的游戏组织范式.md",
+      "title": "网状系统游戏设计——后Checklist时代的游戏组织范式",
+      "desc": "",
+      "tags": [
+        "network-system",
+        "game-design",
+        "player-psychology",
+        "emergent-design",
+        "mother-design"
+      ],
+      "created": "2026-06-05",
+      "status": "draft",
+      "size": 11119
+    },
+    {
+      "path": "理论知识/90-游戏社交关系与家族系统设计.md",
+      "title": "游戏社交关系与家族系统设计",
+      "desc": "",
+      "tags": [
+        "social-systems",
+        "relationship-design",
+        "npc-design",
+        "family-dynamics",
+        "game-design"
+      ],
+      "created": "2026-06-07",
+      "status": "draft",
+      "size": 6112
+    },
+    {
+      "path": "理论知识/90-目标梯度效应.md",
+      "title": "目标梯度效应",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "reinforcement",
+        "happiness-total"
+      ],
+      "created": "2026-06-09",
+      "status": "draft",
+      "size": 807
+    },
+    {
+      "path": "理论知识/91-禀赋效应与沉没成本.md",
+      "title": "禀赋效应与沉没成本",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "reinforcement"
+      ],
+      "created": "2026-06-09",
+      "status": "draft",
+      "size": 916
+    },
+    {
+      "path": "理论知识/92-时间轴战斗与Roguelike双循环设计.md",
+      "title": "时间轴战斗系统设计（完整整合）",
+      "desc": "",
+      "tags": [
+        "timeline-combat",
+        "roguelike",
+        "deck-building",
+        "dual-loop",
+        "monster-design",
+        "boss-design"
+      ],
+      "created": "2026-06-07",
+      "status": "draft",
+      "size": 16317
+    },
+    {
+      "path": "理论知识/92-纯粹完成效应与好奇心缺口.md",
+      "title": "纯粹完成效应与好奇心缺口",
+      "desc": "",
+      "tags": [
+        "player-psychology",
+        "reinforcement"
+      ],
+      "created": "2026-06-09",
+      "status": "draft",
+      "size": 1032
+    },
+    {
+      "path": "理论知识/93-构筑多样性与平衡性的冲突分析.md",
+      "title": "构筑多样性与平衡性的冲突分析",
+      "desc": "",
+      "tags": [
+        "build-diversity",
+        "balance",
+        "deck-building",
+        "time-cost",
+        "archetype-design"
+      ],
+      "created": "2026-06-07",
+      "status": "draft",
+      "size": 8043
+    },
+    {
+      "path": "理论知识/94-多角色队伍的时间轴战斗设计.md",
+      "title": "多角色队伍的时间轴战斗设计",
+      "desc": "",
+      "tags": [
+        "multi-character",
+        "party-combat",
+        "team-management",
+        "timeline-combat",
+        "character-switching"
+      ],
+      "created": "2026-06-07",
+      "status": "draft",
+      "size": 8971
+    },
+    {
+      "path": "理论知识/95-卡牌协同设计与类型融合.md",
+      "title": "卡牌协同设计与类型融合",
+      "desc": "",
+      "tags": [
+        "card-design",
+        "synergy-patterns",
+        "hybrid-genre",
+        "card-psychology",
+        "narrative-cards"
+      ],
+      "created": "2026-06-07",
+      "status": "draft",
+      "size": 8125
+    },
+    {
+      "path": "理论知识/96-类杀戮尖塔卡牌游戏设计分析.md",
+      "title": "类杀戮尖塔卡牌游戏设计分析",
+      "desc": "",
+      "tags": [
+        "slay-the-spire",
+        "roguelike-deckbuilder",
+        "genre-analysis",
+        "game-comparison"
+      ],
+      "created": "2026-06-07",
+      "status": "draft",
+      "size": 7903
+    },
+    {
+      "path": "理论知识/97-具体卡牌设计方法与模板.md",
+      "title": "具体卡牌设计方法与模板",
+      "desc": "",
+      "tags": [
+        "card-design",
+        "card-template",
+        "effect-design",
+        "balancing",
+        "practical-guide"
+      ],
+      "created": "2026-06-07",
+      "status": "draft",
+      "size": 19665
+    },
+    {
+      "path": "理论知识/98-游戏测试与迭代方法论.md",
+      "title": "游戏测试与迭代方法论",
+      "desc": "",
+      "tags": [
+        "playtest",
+        "iteration",
+        "game-testing",
+        "balance-testing",
+        "design-process"
+      ],
+      "created": "2026-06-07",
+      "status": "draft",
+      "size": 7295
+    },
+    {
+      "path": "跨项目知识/Boss设计通用规则.md",
+      "title": "Boss设计通用规则",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 240
+    },
+    {
+      "path": "跨项目知识/Roguelike设计通用规则.md",
+      "title": "Roguelike设计通用规则",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 198
+    },
+    {
+      "path": "跨项目知识/协同效应设计通用规则.md",
+      "title": "协同效应设计通用规则",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 655
+    },
+    {
+      "path": "跨项目知识/卡牌设计通用规则.md",
+      "title": "卡牌设计通用规则",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 1350
+    },
+    {
+      "path": "跨项目知识/选择与决策设计通用规则.md",
+      "title": "选择与决策设计通用规则",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 1929
+    },
+    {
+      "path": "跨项目知识/部位破坏设计通用规则.md",
+      "title": "部位破坏设计通用规则",
+      "desc": "",
+      "tags": [],
+      "created": null,
+      "status": "draft",
+      "size": 196
+    },
+    {
+      "path": "项目经验/01-荒野与曙光-Boss行为设计.md",
+      "title": "荒野与曙光 — Boss行为设计",
+      "desc": "",
+      "tags": [
+        "boss-design",
+        "project-experience"
+      ],
+      "created": "2026-05-24",
+      "status": "draft",
+      "size": 339
+    },
+    {
+      "path": "项目经验/02-荒野与曙光-部位破坏设计.md",
+      "title": "荒野与曙光 — 部位破坏设计",
+      "desc": "",
+      "tags": [
+        "part-break",
+        "project-experience"
+      ],
+      "created": "2026-05-24",
+      "status": "draft",
+      "size": 291
+    },
+    {
+      "path": "项目经验/03-增量自走棋_荒野与曙光-卡牌设计检核.md",
+      "title": "增量自走棋 & 荒野与曙光 — 卡牌设计检核",
+      "desc": "",
+      "tags": [
+        "card-design",
+        "project-experience"
+      ],
+      "created": "2026-05-24",
+      "status": "draft",
+      "size": 1913
+    },
+    {
+      "path": "项目经验/04-增量自走棋_荒野与曙光-协同设计经验.md",
+      "title": "增量自走棋 & 荒野与曙光 — 协同设计经验",
+      "desc": "",
+      "tags": [
+        "synergy",
+        "project-experience"
+      ],
+      "created": "2026-05-24",
+      "status": "draft",
+      "size": 2093
+    },
+    {
+      "path": "项目经验/05-增量自走棋-Roguelike构筑经验.md",
+      "title": "增量自走棋 — Roguelite构筑经验",
+      "desc": "",
+      "tags": [
+        "roguelite",
+        "roguelike",
+        "project-experience"
+      ],
+      "created": "2026-05-24",
+      "status": "draft",
+      "size": 450
+    },
+    {
+      "path": "项目经验/06-增量自走棋-经济与战斗分路设计.md",
+      "title": "增量自走棋 — 经济与战斗分路设计",
+      "desc": "",
+      "tags": [
+        "project-experience",
+        "card-design",
+        "economy",
+        "game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 2716
+    },
+    {
+      "path": "项目经验/07-增量自走棋-升星机制设计.md",
+      "title": "增量自走棋 — 升星机制设计",
+      "desc": "",
+      "tags": [
+        "project-experience",
+        "card-design",
+        "stacking",
+        "game-design"
+      ],
+      "created": "2026-06-01",
+      "status": "draft",
+      "size": 2104
+    },
+    {
+      "path": "项目经验/08-增量自走棋-Roguelike构筑经验.md",
+      "title": "增量自走棋 — Roguelite构筑经验",
+      "desc": "",
+      "tags": [
+        "roguelite",
+        "roguelike",
+        "project-experience"
+      ],
+      "created": "2026-05-24",
+      "status": "draft",
+      "size": 447
+    },
+    {
+      "path": "项目经验/09-荒野与曙光-Boss行为设计.md",
+      "title": "荒野与曙光 — Boss行为设计",
+      "desc": "",
+      "tags": [
+        "boss-design",
+        "project-experience"
+      ],
+      "created": "2026-05-24",
+      "status": "draft",
+      "size": 339
+    },
+    {
+      "path": "项目经验/10-家族纪元-正反馈循环修正经验.md",
+      "title": "家族纪元-正反馈循环修正经验",
+      "desc": "",
+      "tags": [
+        "card-design",
+        "positive-feedback",
+        "player-psychology",
+        "reinforcement",
+        "CET"
+      ],
+      "created": "2026-06-06",
+      "status": "draft",
+      "size": 3760
+    },
+    {
+      "path": "项目经验/增量自走棋_GDD知识分析经验.md",
+      "title": "增量自走棋 GDD 知识分析经验",
+      "desc": "",
+      "tags": [
+        "gdd-analysis",
+        "game-design",
+        "project-experience",
+        "design-intent",
+        "增量自走棋"
+      ],
+      "created": "2026-06-01",
+      "status": "verified",
+      "size": 2489
+    }
+  ],
+  "tags": {
+    "CET": [
+      "项目经验/10-家族纪元-正反馈循环修正经验.md"
+    ],
+    "action-synergy": [
+      "AI代理技术/1-ReAct推理行动协同.md"
+    ],
+    "ai-agent": [
+      "AI代理技术/1-ReAct推理行动协同.md",
+      "AI代理技术/2-Chain-of-Thought.md",
+      "AI代理技术/3-Reflexion自我反思.md",
+      "AI代理技术/4-Self-Refine自改进.md",
+      "AI代理技术/5-Ctx2Skill上下文技能提取.md"
+    ],
+    "analysis-framework": [
+      "理论知识/65-MDA框架.md"
+    ],
+    "archetype-design": [
+      "理论知识/93-构筑多样性与平衡性的冲突分析.md"
+    ],
+    "auto-battler": [
+      "理论知识/02-The Bazaar设计分析.md",
+      "理论知识/49-Auto-Battler品类定义与设计历史.md",
+      "理论知识/50-自走棋商店与刷新机制设计.md",
+      "理论知识/51-自走棋经济系统设计.md",
+      "理论知识/52-自走棋棋盘站位与战斗系统.md",
+      "理论知识/53-自走棋协同机制设计.md",
+      "理论知识/70-背包乱斗单位设计.md",
+      "理论知识/71-背包英雄单位设计.md"
+    ],
+    "balance": [
+      "理论知识/44-游戏平衡性设计.md",
+      "理论知识/93-构筑多样性与平衡性的冲突分析.md"
+    ],
+    "balance-testing": [
+      "理论知识/98-游戏测试与迭代方法论.md"
+    ],
+    "balancing": [
+      "理论知识/97-具体卡牌设计方法与模板.md"
+    ],
+    "base-building": [
+      "理论知识/84-外线反效率优化设计原则.md"
+    ],
+    "behavior-change": [
+      "理论知识/75-心理力学模型.md"
+    ],
+    "boss-design": [
+      "UI设计理论/05-状态呈现设计.md",
+      "理论知识/92-时间轴战斗与Roguelike双循环设计.md",
+      "项目经验/01-荒野与曙光-Boss行为设计.md",
+      "项目经验/09-荒野与曙光-Boss行为设计.md"
+    ],
+    "build-diversity": [
+      "理论知识/93-构筑多样性与平衡性的冲突分析.md"
+    ],
+    "card-design": [
+      "UI设计理论/06-菜单与元UI设计.md",
+      "理论知识/02-The Bazaar设计分析.md",
+      "理论知识/16-卡牌设计规范.md",
+      "理论知识/25-杀戮尖塔卡牌设计分析.md",
+      "理论知识/50-自走棋商店与刷新机制设计.md",
+      "理论知识/82-费用即时间代价的卡牌经济模型.md",
+      "理论知识/83-手牌重置与构筑规划的张力模型.md",
+      "理论知识/95-卡牌协同设计与类型融合.md",
+      "理论知识/97-具体卡牌设计方法与模板.md",
+      "项目经验/03-增量自走棋_荒野与曙光-卡牌设计检核.md",
+      "项目经验/06-增量自走棋-经济与战斗分路设计.md",
+      "项目经验/07-增量自走棋-升星机制设计.md",
+      "项目经验/10-家族纪元-正反馈循环修正经验.md"
+    ],
+    "card-game": [
+      "理论知识/16-卡牌设计规范.md",
+      "理论知识/82-费用即时间代价的卡牌经济模型.md",
+      "理论知识/83-手牌重置与构筑规划的张力模型.md"
+    ],
+    "card-psychology": [
+      "理论知识/95-卡牌协同设计与类型融合.md"
+    ],
+    "card-template": [
+      "理论知识/97-具体卡牌设计方法与模板.md"
+    ],
+    "case-study": [
+      "UI设计理论/08-女神异闻录5UI设计分析.md",
+      "UI设计理论/09-旷野之息UI设计分析.md",
+      "UI设计理论/10-HadesUI设计分析.md",
+      "理论知识/54-上田文人设计哲学.md",
+      "理论知识/55-上田文人三部曲作品分析.md",
+      "理论知识/56-上田文人的影响与传承.md",
+      "理论知识/61-规范与偏离规范.md",
+      "理论知识/70-背包乱斗单位设计.md",
+      "理论知识/71-背包英雄单位设计.md"
+    ],
+    "changelog": [
+      "更新日志.md"
+    ],
+    "character-design": [
+      "理论知识/78-CRPG角色与系统设计.md"
+    ],
+    "character-switching": [
+      "理论知识/94-多角色队伍的时间轴战斗设计.md"
+    ],
+    "checklist": [
+      "理论知识/88-任务列表与Checklist游戏设计.md"
+    ],
+    "class-design": [
+      "理论知识/78-CRPG角色与系统设计.md"
+    ],
+    "cognitive-bias": [
+      "理论知识/64-前景理论.md",
+      "理论知识/66-格式塔心理学.md"
+    ],
+    "combat": [
+      "理论知识/52-自走棋棋盘站位与战斗系统.md"
+    ],
+    "competitive": [
+      "理论知识/44-游戏平衡性设计.md"
+    ],
+    "content-design": [
+      "理论知识/14-渐进式生成内容设计.md"
+    ],
+    "context-mining": [
+      "AI代理技术/5-Ctx2Skill上下文技能提取.md"
+    ],
+    "control-mapping": [
+      "UI设计理论/11-操作映射与手感设计.md"
+    ],
+    "core-loop": [
+      "理论知识/45-增量游戏设计.md",
+      "理论知识/69-强制循环.md"
+    ],
+    "creativity": [
+      "理论知识/47-自然创作观.md",
+      "理论知识/61-规范与偏离规范.md"
+    ],
+    "crpg": [
+      "理论知识/78-CRPG角色与系统设计.md"
+    ],
+    "dbg": [
+      "理论知识/25-杀戮尖塔卡牌设计分析.md"
+    ],
+    "decision-design": [
+      "理论知识/64-前景理论.md",
+      "理论知识/79-相对最优解与三层变化模型.md",
+      "理论知识/82-爬行者体系.md",
+      "理论知识/83-手牌重置与构筑规划的张力模型.md",
+      "理论知识/87-显示概率产生倾向.md"
+    ],
+    "deck-building": [
+      "理论知识/92-时间轴战斗与Roguelike双循环设计.md",
+      "理论知识/93-构筑多样性与平衡性的冲突分析.md"
+    ],
+    "design-framework": [
+      "理论知识/72-输入随机与输出随机.md"
+    ],
+    "design-intent": [
+      "项目经验/增量自走棋_GDD知识分析经验.md"
+    ],
+    "design-methodology": [
+      "理论知识/81-从快乐出发的设计方法论.md"
+    ],
+    "design-pattern": [
+      "理论知识/77-规则变异设计.md"
+    ],
+    "design-philosophy": [
+      "游戏设计理论/_存档/01-核心概念与思维模型_完整版.md",
+      "理论知识/08-父系与母系设计哲学.md",
+      "理论知识/12-减法设计.md",
+      "理论知识/38-叙事中的父系结构设计.md",
+      "理论知识/39-学习与遗忘曲线.md",
+      "理论知识/47-自然创作观.md",
+      "理论知识/54-上田文人设计哲学.md",
+      "理论知识/55-上田文人三部曲作品分析.md",
+      "理论知识/56-上田文人的影响与传承.md",
+      "理论知识/57-游戏设计的三个终极问题.md",
+      "理论知识/58-去显性选择设计方法.md",
+      "理论知识/59-游戏性的谱系.md",
+      "理论知识/60-去目标化指引设计.md",
+      "理论知识/61-规范与偏离规范.md",
+      "理论知识/65-MDA框架.md"
+    ],
+    "design-process": [
+      "理论知识/06-反思设计法.md",
+      "理论知识/98-游戏测试与迭代方法论.md"
+    ],
+    "design-thinking": [
+      "理论知识/06-反思设计法.md"
+    ],
+    "dice-roll": [
+      "理论知识/84-单次检定最优概率80%.md"
+    ],
+    "diegetic-ui": [
+      "UI设计理论/07-DiegeticUI与叙事界面.md",
+      "UI设计理论/08-女神异闻录5UI设计分析.md",
+      "UI设计理论/09-旷野之息UI设计分析.md"
+    ],
+    "difficulty": [
+      "理论知识/05-额外挑战与及格线.md",
+      "理论知识/20-难度调节方案.md",
+      "理论知识/67-DDA动态难度调节.md"
+    ],
+    "dual-loop": [
+      "理论知识/92-时间轴战斗与Roguelike双循环设计.md"
+    ],
+    "economy": [
+      "理论知识/50-自走棋商店与刷新机制设计.md",
+      "理论知识/51-自走棋经济系统设计.md",
+      "项目经验/06-增量自走棋-经济与战斗分路设计.md"
+    ],
+    "effect-design": [
+      "理论知识/97-具体卡牌设计方法与模板.md"
+    ],
+    "emergence": [
+      "UI设计理论/09-旷野之息UI设计分析.md",
+      "理论知识/11-机制轴设计方法.md",
+      "理论知识/41-涌现式设计.md",
+      "理论知识/79-相对最优解与三层变化模型.md"
+    ],
+    "emergent-design": [
+      "理论知识/89-网状系统游戏设计——后Checklist时代的游戏组织范式.md"
+    ],
+    "emotional-design": [
+      "理论知识/85-高潮落差理论.md"
+    ],
+    "empowerment": [
+      "理论知识/22-权力下放设计.md",
+      "理论知识/58-去显性选择设计方法.md",
+      "理论知识/60-去目标化指引设计.md"
+    ],
+    "experience-4x": [
+      "理论知识/28-体验4X.md"
+    ],
+    "experience-design": [
+      "理论知识/63-峰终定律.md"
+    ],
+    "experience-graph": [
+      "理论知识/29-体验图分析框架.md"
+    ],
+    "expression": [
+      "理论知识/03-创造性表达.md"
+    ],
+    "family-dynamics": [
+      "理论知识/90-游戏社交关系与家族系统设计.md"
+    ],
+    "feedback": [
+      "理论知识/87-显示概率产生倾向.md"
+    ],
+    "feedback-loop": [
+      "AI代理技术/4-Self-Refine自改进.md",
+      "理论知识/82-爬行者体系.md"
+    ],
+    "flow": [
+      "UI设计理论/02-HUD信息架构.md",
+      "游戏设计理论/_存档/04-游戏节奏与心流设计_完整版.md",
+      "理论知识/20-难度调节方案.md",
+      "理论知识/36-心流通道.md",
+      "理论知识/43-游戏节奏设计.md",
+      "理论知识/60-去目标化指引设计.md",
+      "理论知识/62-耶克斯-多德森定律.md",
+      "理论知识/67-DDA动态难度调节.md",
+      "理论知识/82-费用即时间代价的卡牌经济模型.md",
+      "理论知识/85-可选回合制设计.md"
+    ],
+    "game-analysis": [
+      "理论知识/29-体验图分析框架.md",
+      "理论知识/55-上田文人三部曲作品分析.md",
+      "理论知识/56-上田文人的影响与传承.md",
+      "理论知识/79-相对最优解与三层变化模型.md"
+    ],
+    "game-architecture": [
+      "理论知识/24-三端分工设计.md",
+      "理论知识/78-CRPG角色与系统设计.md"
+    ],
+    "game-balance": [
+      "理论知识/84-单次检定最优概率80%.md"
+    ],
+    "game-comparison": [
+      "理论知识/96-类杀戮尖塔卡牌游戏设计分析.md"
+    ],
+    "game-design": [
+      "理论知识/01-Roguelike设计规范.md",
+      "理论知识/02-The Bazaar设计分析.md",
+      "理论知识/06-反思设计法.md",
+      "理论知识/12-减法设计.md",
+      "理论知识/14-渐进式生成内容设计.md",
+      "理论知识/16-卡牌设计规范.md",
+      "理论知识/23-热奈特三分法.md",
+      "理论知识/24-三端分工设计.md",
+      "理论知识/25-杀戮尖塔卡牌设计分析.md",
+      "理论知识/29-体验图分析框架.md",
+      "理论知识/40-英雄设计三规范.md",
+      "理论知识/44-游戏平衡性设计.md",
+      "理论知识/45-增量游戏设计.md",
+      "理论知识/47-自然创作观.md",
+      "理论知识/49-Auto-Battler品类定义与设计历史.md",
+      "理论知识/51-自走棋经济系统设计.md",
+      "理论知识/57-游戏设计的三个终极问题.md",
+      "理论知识/59-游戏性的谱系.md",
+      "理论知识/70-背包乱斗单位设计.md",
+      "理论知识/71-背包英雄单位设计.md",
+      "理论知识/80-快乐密度的进程边界.md",
+      "理论知识/82-费用即时间代价的卡牌经济模型.md",
+      "理论知识/83-MUD玩家四分类.md",
+      "理论知识/83-手牌重置与构筑规划的张力模型.md",
+      "理论知识/84-外线反效率优化设计原则.md",
+      "理论知识/85-可选回合制设计.md",
+      "理论知识/86-玩家不尊重NPC的原因.md",
+      "理论知识/88-任务列表与Checklist游戏设计.md",
+      "理论知识/89-网状系统游戏设计——后Checklist时代的游戏组织范式.md",
+      "理论知识/90-游戏社交关系与家族系统设计.md",
+      "项目经验/06-增量自走棋-经济与战斗分路设计.md",
+      "项目经验/07-增量自走棋-升星机制设计.md",
+      "项目经验/增量自走棋_GDD知识分析经验.md"
+    ],
+    "game-mechanics": [
+      "UI设计理论/01-游戏UI设计原则.md",
+      "UI设计理论/03-交互反馈与动效设计.md",
+      "UI设计理论/05-状态呈现设计.md",
+      "UI设计理论/06-菜单与元UI设计.md",
+      "UI设计理论/10-HadesUI设计分析.md",
+      "UI设计理论/11-操作映射与手感设计.md",
+      "游戏设计理论/_存档/03-游戏机制设计技法_完整版.md",
+      "理论知识/11-机制轴设计方法.md",
+      "理论知识/50-自走棋商店与刷新机制设计.md",
+      "理论知识/52-自走棋棋盘站位与战斗系统.md",
+      "理论知识/53-自走棋协同机制设计.md",
+      "理论知识/58-去显性选择设计方法.md",
+      "理论知识/60-去目标化指引设计.md",
+      "理论知识/69-强制循环.md",
+      "理论知识/82-爬行者体系.md",
+      "理论知识/84-单次检定最优概率80%.md",
+      "理论知识/87-显示概率产生倾向.md"
+    ],
+    "game-rhythm": [
+      "理论知识/85-高潮落差理论.md"
+    ],
+    "game-testing": [
+      "理论知识/98-游戏测试与迭代方法论.md"
+    ],
+    "gdd-analysis": [
+      "项目经验/增量自走棋_GDD知识分析经验.md"
+    ],
+    "genre-analysis": [
+      "理论知识/96-类杀戮尖塔卡牌游戏设计分析.md"
+    ],
+    "genre-history": [
+      "理论知识/49-Auto-Battler品类定义与设计历史.md"
+    ],
+    "happiness-density": [
+      "理论知识/80-快乐密度的进程边界.md",
+      "理论知识/81-从快乐出发的设计方法论.md"
+    ],
+    "happiness-total": [
+      "理论知识/04-叠层设计与延迟满足.md",
+      "理论知识/07-分段奖励设计.md",
+      "理论知识/17-快车道设计.md",
+      "理论知识/18-快乐总量.md",
+      "理论知识/33-无效进程与三层乐趣体系.md",
+      "理论知识/63-峰终定律.md",
+      "理论知识/82-爬行者体系.md",
+      "理论知识/90-目标梯度效应.md"
+    ],
+    "hero-design": [
+      "理论知识/40-英雄设计三规范.md"
+    ],
+    "hud": [
+      "UI设计理论/02-HUD信息架构.md",
+      "UI设计理论/05-状态呈现设计.md",
+      "UI设计理论/09-旷野之息UI设计分析.md"
+    ],
+    "hybrid-genre": [
+      "理论知识/95-卡牌协同设计与类型融合.md"
+    ],
+    "incremental-game": [
+      "理论知识/45-增量游戏设计.md"
+    ],
+    "interaction-design": [
+      "理论知识/68-可供性理论.md"
+    ],
+    "interaction-feedback": [
+      "UI设计理论/03-交互反馈与动效设计.md",
+      "UI设计理论/08-女神异闻录5UI设计分析.md",
+      "UI设计理论/10-HadesUI设计分析.md"
+    ],
+    "invalid-process": [
+      "理论知识/33-无效进程与三层乐趣体系.md"
+    ],
+    "inventory-management": [
+      "理论知识/70-背包乱斗单位设计.md",
+      "理论知识/71-背包英雄单位设计.md"
+    ],
+    "iteration": [
+      "理论知识/98-游戏测试与迭代方法论.md"
+    ],
+    "japanese-game-design": [
+      "理论知识/54-上田文人设计哲学.md",
+      "理论知识/55-上田文人三部曲作品分析.md",
+      "理论知识/56-上田文人的影响与传承.md"
+    ],
+    "lesson-learned": [
+      "理论知识/81-从快乐出发的设计方法论.md"
+    ],
+    "loot-design": [
+      "理论知识/74-确定性vs随机性掉落设计.md"
+    ],
+    "mechanics": [
+      "理论知识/15-精准操作设计.md",
+      "理论知识/73-伪随机分布PRD.md"
+    ],
+    "meta": [
+      "更新日志.md"
+    ],
+    "metaprogression": [
+      "理论知识/77-规则变异设计.md",
+      "理论知识/84-外线反效率优化设计原则.md"
+    ],
+    "methodology": [
+      "UI设计理论/04-游戏UX评估方法.md",
+      "理论知识/06-反思设计法.md",
+      "理论知识/57-游戏设计的三个终极问题.md",
+      "理论知识/59-游戏性的谱系.md",
+      "理论知识/61-规范与偏离规范.md",
+      "理论知识/65-MDA框架.md"
+    ],
+    "moba": [
+      "理论知识/40-英雄设计三规范.md"
+    ],
+    "monster-design": [
+      "理论知识/92-时间轴战斗与Roguelike双循环设计.md"
+    ],
+    "mother-design": [
+      "理论知识/89-网状系统游戏设计——后Checklist时代的游戏组织范式.md"
+    ],
+    "motivation": [
+      "理论知识/75-心理力学模型.md",
+      "理论知识/76-认知评价理论CET.md"
+    ],
+    "mud": [
+      "理论知识/83-MUD玩家四分类.md"
+    ],
+    "multi-character": [
+      "理论知识/94-多角色队伍的时间轴战斗设计.md"
+    ],
+    "narrative": [
+      "UI设计理论/07-DiegeticUI与叙事界面.md",
+      "UI设计理论/08-女神异闻录5UI设计分析.md",
+      "游戏设计理论/_存档/05-叙事设计_完整版.md",
+      "理论知识/10-宏观层与微观层叙事.md",
+      "理论知识/23-热奈特三分法.md",
+      "理论知识/31-玩家投影与游戏肌理.md",
+      "理论知识/38-叙事中的父系结构设计.md",
+      "理论知识/42-游戏化叙事.md",
+      "理论知识/85-高潮落差理论.md",
+      "理论知识/86-玩家不尊重NPC的原因.md"
+    ],
+    "narrative-cards": [
+      "理论知识/95-卡牌协同设计与类型融合.md"
+    ],
+    "narratology": [
+      "理论知识/23-热奈特三分法.md"
+    ],
+    "network-system": [
+      "理论知识/89-网状系统游戏设计——后Checklist时代的游戏组织范式.md"
+    ],
+    "npc-design": [
+      "理论知识/86-玩家不尊重NPC的原因.md",
+      "理论知识/90-游戏社交关系与家族系统设计.md"
+    ],
+    "open-world": [
+      "理论知识/14-渐进式生成内容设计.md",
+      "理论知识/60-去目标化指引设计.md"
+    ],
+    "operant-conditioning": [
+      "理论知识/45-增量游戏设计.md"
+    ],
+    "optimal-solution": [
+      "理论知识/79-相对最优解与三层变化模型.md"
+    ],
+    "part-break": [
+      "项目经验/02-荒野与曙光-部位破坏设计.md"
+    ],
+    "party-combat": [
+      "理论知识/94-多角色队伍的时间轴战斗设计.md"
+    ],
+    "peak-end-rule": [
+      "理论知识/85-高潮落差理论.md"
+    ],
+    "perception": [
+      "理论知识/66-格式塔心理学.md",
+      "理论知识/68-可供性理论.md"
+    ],
+    "player-experience": [
+      "理论知识/80-快乐密度的进程边界.md"
+    ],
+    "player-psychology": [
+      "UI设计理论/01-游戏UI设计原则.md",
+      "游戏设计理论/_存档/02-玩家心理学_完整版.md",
+      "理论知识/01-Roguelike设计规范.md",
+      "理论知识/03-创造性表达.md",
+      "理论知识/05-额外挑战与及格线.md",
+      "理论知识/07-分段奖励设计.md",
+      "理论知识/09-过度理由效应.md",
+      "理论知识/19-浪费规避设计.md",
+      "理论知识/21-驱动力模型.md",
+      "理论知识/22-权力下放设计.md",
+      "理论知识/26-双轨收益与强化程式.md",
+      "理论知识/27-他者确认与社交反馈.md",
+      "理论知识/30-投篮效应.md",
+      "理论知识/32-玩具系统.md",
+      "理论知识/34-系统交互与体验调节.md",
+      "理论知识/37-信号与强化体系.md",
+      "理论知识/39-学习与遗忘曲线.md",
+      "理论知识/45-增量游戏设计.md",
+      "理论知识/46-正反馈与负反馈循环.md",
+      "理论知识/48-自我决定理论SDT.md",
+      "理论知识/58-去显性选择设计方法.md",
+      "理论知识/59-游戏性的谱系.md",
+      "理论知识/62-耶克斯-多德森定律.md",
+      "理论知识/63-峰终定律.md",
+      "理论知识/64-前景理论.md",
+      "理论知识/66-格式塔心理学.md",
+      "理论知识/67-DDA动态难度调节.md",
+      "理论知识/68-可供性理论.md",
+      "理论知识/69-强制循环.md",
+      "理论知识/72-输入随机与输出随机.md",
+      "理论知识/74-确定性vs随机性掉落设计.md",
+      "理论知识/75-心理力学模型.md",
+      "理论知识/76-认知评价理论CET.md",
+      "理论知识/77-规则变异设计.md",
+      "理论知识/79-相对最优解与三层变化模型.md",
+      "理论知识/82-爬行者体系.md",
+      "理论知识/83-MUD玩家四分类.md",
+      "理论知识/83-手牌重置与构筑规划的张力模型.md",
+      "理论知识/84-单次检定最优概率80%.md",
+      "理论知识/84-外线反效率优化设计原则.md",
+      "理论知识/85-可选回合制设计.md",
+      "理论知识/85-高潮落差理论.md",
+      "理论知识/86-玩家不尊重NPC的原因.md",
+      "理论知识/87-显示概率产生倾向.md",
+      "理论知识/88-任务列表与Checklist游戏设计.md",
+      "理论知识/89-网状系统游戏设计——后Checklist时代的游戏组织范式.md",
+      "理论知识/90-目标梯度效应.md",
+      "理论知识/91-禀赋效应与沉没成本.md",
+      "理论知识/92-纯粹完成效应与好奇心缺口.md",
+      "项目经验/10-家族纪元-正反馈循环修正经验.md"
+    ],
+    "player-skill": [
+      "理论知识/15-精准操作设计.md"
+    ],
+    "player-types": [
+      "理论知识/83-MUD玩家四分类.md"
+    ],
+    "playtest": [
+      "理论知识/98-游戏测试与迭代方法论.md"
+    ],
+    "positive-feedback": [
+      "项目经验/10-家族纪元-正反馈循环修正经验.md"
+    ],
+    "practical-guide": [
+      "理论知识/97-具体卡牌设计方法与模板.md"
+    ],
+    "probability": [
+      "理论知识/73-伪随机分布PRD.md",
+      "理论知识/84-单次检定最优概率80%.md",
+      "理论知识/87-显示概率产生倾向.md"
+    ],
+    "procedural-gen": [
+      "理论知识/13-渐进式生成.md"
+    ],
+    "procedural-generation": [
+      "理论知识/01-Roguelike设计规范.md",
+      "理论知识/14-渐进式生成内容设计.md"
+    ],
+    "process-design": [
+      "理论知识/80-快乐密度的进程边界.md",
+      "理论知识/81-从快乐出发的设计方法论.md"
+    ],
+    "progression": [
+      "理论知识/88-任务列表与Checklist游戏设计.md"
+    ],
+    "project-experience": [
+      "项目经验/01-荒野与曙光-Boss行为设计.md",
+      "项目经验/02-荒野与曙光-部位破坏设计.md",
+      "项目经验/03-增量自走棋_荒野与曙光-卡牌设计检核.md",
+      "项目经验/04-增量自走棋_荒野与曙光-协同设计经验.md",
+      "项目经验/05-增量自走棋-Roguelike构筑经验.md",
+      "项目经验/06-增量自走棋-经济与战斗分路设计.md",
+      "项目经验/07-增量自走棋-升星机制设计.md",
+      "项目经验/08-增量自走棋-Roguelike构筑经验.md",
+      "项目经验/09-荒野与曙光-Boss行为设计.md",
+      "项目经验/增量自走棋_GDD知识分析经验.md"
+    ],
+    "prompt-pattern": [
+      "AI代理技术/2-Chain-of-Thought.md"
+    ],
+    "pvp": [
+      "理论知识/02-The Bazaar设计分析.md"
+    ],
+    "quest-design": [
+      "理论知识/88-任务列表与Checklist游戏设计.md"
+    ],
+    "quick-lane": [
+      "理论知识/17-快车道设计.md"
+    ],
+    "randomness": [
+      "理论知识/30-投篮效应.md",
+      "理论知识/72-输入随机与输出随机.md",
+      "理论知识/73-伪随机分布PRD.md",
+      "理论知识/74-确定性vs随机性掉落设计.md"
+    ],
+    "reasoning": [
+      "AI代理技术/1-ReAct推理行动协同.md",
+      "AI代理技术/2-Chain-of-Thought.md"
+    ],
+    "reflection": [
+      "AI代理技术/3-Reflexion自我反思.md"
+    ],
+    "reinforcement": [
+      "UI设计理论/03-交互反馈与动效设计.md",
+      "理论知识/01-Roguelike设计规范.md",
+      "理论知识/04-叠层设计与延迟满足.md",
+      "理论知识/26-双轨收益与强化程式.md",
+      "理论知识/37-信号与强化体系.md",
+      "理论知识/46-正反馈与负反馈循环.md",
+      "理论知识/69-强制循环.md",
+      "理论知识/77-规则变异设计.md",
+      "理论知识/90-目标梯度效应.md",
+      "理论知识/91-禀赋效应与沉没成本.md",
+      "理论知识/92-纯粹完成效应与好奇心缺口.md",
+      "项目经验/10-家族纪元-正反馈循环修正经验.md"
+    ],
+    "relationship-design": [
+      "理论知识/90-游戏社交关系与家族系统设计.md"
+    ],
+    "reward-design": [
+      "理论知识/07-分段奖励设计.md"
+    ],
+    "rhythm": [
+      "UI设计理论/02-HUD信息架构.md",
+      "游戏设计理论/_存档/04-游戏节奏与心流设计_完整版.md",
+      "理论知识/36-心流通道.md",
+      "理论知识/43-游戏节奏设计.md",
+      "理论知识/62-耶克斯-多德森定律.md",
+      "理论知识/82-费用即时间代价的卡牌经济模型.md",
+      "理论知识/85-可选回合制设计.md"
+    ],
+    "roguelike": [
+      "理论知识/01-Roguelike设计规范.md",
+      "理论知识/79-相对最优解与三层变化模型.md",
+      "理论知识/92-时间轴战斗与Roguelike双循环设计.md",
+      "项目经验/05-增量自走棋-Roguelike构筑经验.md",
+      "项目经验/08-增量自走棋-Roguelike构筑经验.md"
+    ],
+    "roguelike-deckbuilder": [
+      "理论知识/96-类杀戮尖塔卡牌游戏设计分析.md"
+    ],
+    "roguelite": [
+      "UI设计理论/10-HadesUI设计分析.md",
+      "理论知识/02-The Bazaar设计分析.md",
+      "理论知识/25-杀戮尖塔卡牌设计分析.md",
+      "理论知识/71-背包英雄单位设计.md",
+      "理论知识/77-规则变异设计.md",
+      "项目经验/05-增量自走棋-Roguelike构筑经验.md",
+      "项目经验/08-增量自走棋-Roguelike构筑经验.md"
+    ],
+    "rpg": [
+      "理论知识/78-CRPG角色与系统设计.md"
+    ],
+    "self-determination-theory": [
+      "理论知识/76-认知评价理论CET.md"
+    ],
+    "self-improvement": [
+      "AI代理技术/3-Reflexion自我反思.md",
+      "AI代理技术/4-Self-Refine自改进.md"
+    ],
+    "skill-acquisition": [
+      "AI代理技术/5-Ctx2Skill上下文技能提取.md"
+    ],
+    "skill-system": [
+      "理论知识/78-CRPG角色与系统设计.md"
+    ],
+    "slay-the-spire": [
+      "理论知识/25-杀戮尖塔卡牌设计分析.md",
+      "理论知识/96-类杀戮尖塔卡牌游戏设计分析.md"
+    ],
+    "social": [
+      "理论知识/27-他者确认与社交反馈.md"
+    ],
+    "social-interaction": [
+      "理论知识/86-玩家不尊重NPC的原因.md"
+    ],
+    "social-systems": [
+      "理论知识/90-游戏社交关系与家族系统设计.md"
+    ],
+    "spatial-ui": [
+      "UI设计理论/09-旷野之息UI设计分析.md"
+    ],
+    "stacking": [
+      "项目经验/07-增量自走棋-升星机制设计.md"
+    ],
+    "subtraction-design": [
+      "理论知识/12-减法设计.md"
+    ],
+    "synergy": [
+      "理论知识/35-协同效应.md",
+      "理论知识/53-自走棋协同机制设计.md",
+      "项目经验/04-增量自走棋_荒野与曙光-协同设计经验.md"
+    ],
+    "synergy-patterns": [
+      "理论知识/95-卡牌协同设计与类型融合.md"
+    ],
+    "system-design": [
+      "理论知识/67-DDA动态难度调节.md",
+      "理论知识/73-伪随机分布PRD.md",
+      "理论知识/74-确定性vs随机性掉落设计.md"
+    ],
+    "system-interaction": [
+      "理论知识/10-宏观层与微观层叙事.md",
+      "理论知识/11-机制轴设计方法.md",
+      "理论知识/24-三端分工设计.md",
+      "理论知识/34-系统交互与体验调节.md",
+      "理论知识/35-协同效应.md",
+      "理论知识/41-涌现式设计.md",
+      "理论知识/51-自走棋经济系统设计.md",
+      "理论知识/52-自走棋棋盘站位与战斗系统.md",
+      "理论知识/53-自走棋协同机制设计.md",
+      "理论知识/84-外线反效率优化设计原则.md"
+    ],
+    "task-management": [
+      "理论知识/88-任务列表与Checklist游戏设计.md"
+    ],
+    "team-management": [
+      "理论知识/94-多角色队伍的时间轴战斗设计.md"
+    ],
+    "the-bazaar": [
+      "理论知识/02-The Bazaar设计分析.md"
+    ],
+    "theory": [
+      "游戏设计理论/_存档/01-核心概念与思维模型_完整版.md",
+      "游戏设计理论/_存档/02-玩家心理学_完整版.md",
+      "游戏设计理论/_存档/03-游戏机制设计技法_完整版.md",
+      "游戏设计理论/_存档/04-游戏节奏与心流设计_完整版.md",
+      "游戏设计理论/_存档/05-叙事设计_完整版.md"
+    ],
+    "time-cost": [
+      "理论知识/93-构筑多样性与平衡性的冲突分析.md"
+    ],
+    "timeline-combat": [
+      "理论知识/92-时间轴战斗与Roguelike双循环设计.md",
+      "理论知识/94-多角色队伍的时间轴战斗设计.md"
+    ],
+    "toy-system": [
+      "理论知识/32-玩具系统.md"
+    ],
+    "ui-design": [
+      "UI设计理论/01-游戏UI设计原则.md",
+      "UI设计理论/02-HUD信息架构.md",
+      "UI设计理论/03-交互反馈与动效设计.md",
+      "UI设计理论/04-游戏UX评估方法.md",
+      "UI设计理论/05-状态呈现设计.md",
+      "UI设计理论/06-菜单与元UI设计.md",
+      "UI设计理论/07-DiegeticUI与叙事界面.md",
+      "UI设计理论/08-女神异闻录5UI设计分析.md",
+      "UI设计理论/09-旷野之息UI设计分析.md",
+      "UI设计理论/10-HadesUI设计分析.md",
+      "UI设计理论/11-操作映射与手感设计.md",
+      "理论知识/66-格式塔心理学.md",
+      "理论知识/68-可供性理论.md"
+    ],
+    "ux-evaluation": [
+      "UI设计理论/04-游戏UX评估方法.md"
+    ],
+    "waste-avoidance": [
+      "理论知识/19-浪费规避设计.md"
+    ],
+    "增量自走棋": [
+      "项目经验/增量自走棋_GDD知识分析经验.md"
+    ]
+  }
+}

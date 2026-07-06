@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GuandanKitty - 战斗界面原型</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --felt: #1a5c2a;
+    --felt-dark: #0f3d1a;
+    --gold: #c9a84c;
+    --gold-light: #e8d48b;
+    --card-bg: #f5f0e8;
+    --card-red: #c0392b;
+    --card-black: #2c3e50;
+    --dm-bg: #1a1a2e;
+    --text: #e0d5c1;
+    --text-dim: #8a8060;
+    --danger: #e74c3c;
+    --success: #27ae60;
+    --highlight: #f39c12;
+  }
+  
+  body {
+    background: #0d0d0d;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: var(--text);
+  }
+  
+  .battle-table {
+    width: 1200px;
+    height: 800px;
+    background: linear-gradient(180deg, var(--felt-dark) 0%, var(--felt) 50%, var(--felt-dark) 100%);
+    border: 12px solid #3d2010;
+    border-radius: 16px;
+    box-shadow: 
+      0 0 60px rgba(0,0,0,0.8),
+      inset 0 0 120px rgba(0,0,0,0.3),
+      0 8px 32px rgba(0,0,0,0.6);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* 桌面纹理 */
+  .battle-table::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px, rgba(255,255,255,0.008) 2px, rgba(255,255,255,0.008) 3px
+    );
+    pointer-events: none;
+  }
+  
+  /* DM 区域 */
+  .dm-area {
+    height: 240px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 100%);
+    border-bottom: 2px solid rgba(201,168,76,0.3);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 12px 20px 16px;
+    gap: 16px;
+  }
+  
+  .dm-label {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  
+  .dm-screen-hint {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.4;
+  }
+  
+  /* 怪物卡 */
+  .monster-cards {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex: 1;
+  }
+  
+  .monster-card {
+    width: 100px;
+    height: 140px;
+    background: var(--card-bg);
+    border-radius: 6px;
+    border: 2px solid #8b7355;
+    position: relative;
+    box-shadow: 2px 4px 12px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+    font-size: 10px;
+    color: #333;
+    transition: transform 0.15s;
+  }
+  .monster-card:hover { transform: translateY(-4px); }
+  .monster-card.elite { border-color: var(--gold); box-shadow: 2px 4px 12px rgba(201,168,76,0.4); }
+  .monster-card.boss { border-color: var(--danger); box-shadow: 2px 4px 16px rgba(231,76,60,0.5); }
+  
+  .monster-level {
+    display: flex;
+    gap: 2px;
+    font-size: 8px;
+    color: #666;
+  }
+  .monster-icon {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+  }
+  .monster-name { font-weight: bold; text-align: center; margin: 2px 0; }
+  .monster-hp { text-align: center; color: var(--card-red); font-size: 9px; }
+  .monster-effect { text-align: center; font-size: 8px; color: #666; margin-top: 2px; }
+  .monster-dice {
+    position: absolute;
+    bottom: -14px;
+    right: -6px;
+    width: 24px;
+    height: 24px;
+    background: #e8d48b;
+    border-radius: 4px;
+    border: 1px solid #8b7355;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    box-shadow: 1px 2px 4px rgba(0,0,0,0.4);
+  }
+  
+  /* 敌方手牌 */
+  .enemy-hand {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+    margin-left: 20px;
+  }
+  
+  .enemy-card {
+    width: 50px;
+    height: 72px;
+    background: var(--card-bg);
+    border-radius: 4px;
+    border: 1px solid #999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 1px 2px 6px rgba(0,0,0,0.3);
+  }
+  .enemy-card.red { color: var(--card-red); }
+  .enemy-card.black { color: var(--card-black); }
+  .enemy-card .suit { font-size: 16px; }
+  .enemy-card .rank { font-size: 12px; margin-top: -2px; }
+  
+  /* 战斗网格（牌河） */
+  .battle-grid {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 40px;
+  }
+  
+  .grid-lines {
+    position: absolute;
+    inset: 20px 40px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+  }
+  .grid-lines::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0; right: 0;
+    border-top: 1px dashed rgba(255,255,255,0.1);
+  }
+  
+  .river-cards {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .river-card {
+    width: 64px;
+    height: 90px;
+    background: var(--card-bg);
+    border-radius: 5px;
+    border: 2px solid #bbb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 2px 3px 10px rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .river-card.red { color: var(--card-red); }
+  .river-card.black { color: var(--card-black); }
+  .river-card .suit { font-size: 22px; }
+  .river-card .rank { font-size: 16px; }
+  .river-card.player-card::after {
+    content: '你';
+    position: absolute;
+    bottom: -16px;
+    font-size: 8px;
+    color: var(--success);
+    letter-spacing: 1px;
+  }
+  .river-card.enemy-card::after {
+    content: '敌';
+    position: absolute;
+    top: -16px;
+    font-size: 8px;
+    color: var(--danger);
+    letter-spacing: 1px;
+  }
+  
+  /* 链深度指示器 */
+  .chain-indicator {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .chain-label {
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+  .chain-pips {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .chain-pip {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .chain-pip.active { background: var(--gold); border-color: var(--gold-light); box-shadow: 0 0 8px rgba(201,168,76,0.6); }
+  .chain-multiplier {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--gold);
+  }
+  
+  /* 玩家区域 */
+  .player-area {
+    height: 200px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.15) 100%);
+    border-top: 2px solid rgba(201,168,76,0.3);
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px 16px;
+    position: relative;
+  }
+  
+  .player-status {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 11px;
+  }
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .status-icon { font-size: 16px; }
+  .status-value { font-weight: bold; color: var(--gold); }
+  .status-label { color: var(--text-dim); font-size: 9px; }
+  
+  .player-hand {
+    flex: 1;
+    display: flex;
+    gap: 6px;
+    align-items: flex-end;
+    justify-content: center;
+    overflow-x: auto;
+    padding: 0 20px;
+  }
+  
+  .player-card {
+    width: 60px;
+    height: 86px;
+    background: var(--card-bg);
+    border-radius: 5px;
+    border: 2px solid #ccc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 1px 3px 8px rgba(0,0,0,0.4);
+    transition: all 0.15s;
+    position: relative;
+  }
+  .player-card:hover { transform: translateY(-12px); border-color: var(--gold); box-shadow: 2px 6px 16px rgba(201,168,76,0.5); }
+  .player-card.selected { transform: translateY(-20px); border-color: var(--highlight); box-shadow: 0 4px 20px rgba(243,156,18,0.6); background: #fffef5; }
+  .player-card.red { color: var(--card-red); }
+  .player-card.black { color: var(--card-black); }
+  .player-card .suit { font-size: 18px; }
+  .player-card .rank { font-size: 14px; }
+  .player-card .sticker-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--highlight);
+  }
+  
+  .action-bar {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 6px;
+  }
+  
+  .btn {
+    padding: 10px 28px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.2);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text);
+    transition: all 0.15s;
+    letter-spacing: 1px;
+  }
+  .btn-play {
+    background: linear-gradient(180deg, #2d6a4f, #1b4332);
+    border-color: var(--success);
+    font-weight: bold;
+    font-size: 15px;
+    padding: 12px 48px;
+  }
+  .btn-play:hover { background: linear-gradient(180deg, #40916c, #2d6a4f); }
+  .btn-call {
+    background: linear-gradient(180deg, #4a3f28, #2d2415);
+    border-color: var(--gold);
+  }
+  .btn-call:hover { background: linear-gradient(180deg, #6b5a3a, #4a3f28); }
+  .btn-pass {
+    background: transparent;
+    border-color: rgba(255,255,255,0.08);
+    color: var(--text-dim);
+    font-size: 11px;
+    padding: 10px 20px;
+  }
+  .btn-pass:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+  
+  /* HP 血条 */
+  .hp-bar-outer {
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 200px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 5px;
+    border: 1px solid rgba(255,255,255,0.1);
+    overflow: hidden;
+  }
+  .hp-bar-inner {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: linear-gradient(0deg, var(--danger), #c0392b 60%, var(--success));
+    border-radius: 5px;
+    transition: height 0.4s;
+  }
+  .hp-text {
+    position: absolute;
+    top: 50%;
+    left: 34px;
+    transform: translateY(-50%);
+    writing-mode: vertical-rl;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+  
+  /* 回合信息 */
+  .round-info {
+    position: absolute;
+    top: 14px;
+    right: 24px;
+    text-align: right;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  .round-info .turn { font-size: 13px; color: var(--gold); font-weight: bold; }
+  
+  /* 弹窗提示 */
+  .toast {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.9);
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    padding: 16px 32px;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--gold);
+    letter-spacing: 2px;
+    pointer-events: none;
+    animation: fadeIn 0.3s;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } }
+</style>
+</head>
+<body>
+
+<div class="battle-table">
+  
+  <!-- DM 区域 -->
+  <div class="dm-area">
+    <div class="dm-screen-hint"></div>
+    <div class="dm-label">🎭 DM</div>
+    
+    <!-- 怪物卡 -->
+    <div class="monster-cards">
+      <div class="monster-card">
+        <div class="monster-level">♠♠♠</div>
+        <div class="monster-icon">👹</div>
+        <div class="monster-name">哥布林</div>
+        <div class="monster-hp">❤️ 500</div>
+        <div class="monster-effect">弃3补3</div>
+        <div class="monster-dice">🎲</div>
+      </div>
+      <div class="monster-card elite">
+        <div class="monster-level">♠♠♠♠</div>
+        <div class="monster-icon">👹</div>
+        <div class="monster-name">哥布林首领</div>
+        <div class="monster-hp">❤️ 800</div>
+        <div class="monster-effect">弃4补4</div>
+        <div class="monster-dice">🎲</div>
+      </div>
+    </div>
+    
+    <!-- 敌方手牌（可见） -->
+    <div class="enemy-hand">
+      <div class="enemy-card black"><span class="suit">♠</span><span class="rank">4</span></div>
+      <div class="enemy-card black"><span class="suit">♣</span><span class="rank">5</span></div>
+      <div class="enemy-card red"><span class="suit">♥</span><span class="rank">9</span></div>
+      <div class="enemy-card red"><span class="suit">♦</span><span class="rank">K</span></div>
+      <div class="enemy-card black"><span class="suit">♠</span><span class="rank">3</span></div>
+    </div>
+  </div>
+  
+  <!-- 战斗网格 -->
+  <div class="battle-grid">
+    <div class="grid-lines"></div>
+    
+    <div class="river-cards">
+      <div class="river-card player-card black"><span class="suit">♠</span><span class="rank">3</span></div>
+      <div class="river-card enemy-card red"><span class="suit">♦</span><span class="rank">K</span></div>
+    </div>
+    
+    <!-- 接龙深度 -->
+    <div class="chain-indicator">
+      <div class="chain-label">接龙</div>
+      <div class="chain-pips">
+        <div class="chain-pip active"></div>
+        <div class="chain-pip active"></div>
+        <div class="chain-pip"></div>
+        <div class="chain-pip"></div>
+        <div class="chain-pip"></div>
+      </div>
+      <div class="chain-multiplier">×4</div>
+    </div>
+    
+    <!-- HP 条 -->
+    <div class="hp-bar-outer">
+      <div class="hp-bar-inner" style="height: 62%;"></div>
+    </div>
+    <div class="hp-text">HP 1300/800</div>
+  </div>
+  
+  <!-- 玩家区域 -->
+  <div class="player-area">
+    <div class="player-status">
+      <div class="status-item">
+        <span class="status-icon">📇</span>
+        <span class="status-value">32</span>
+        <span class="status-label">牌堆</span>
+      </div>
+      <div class="status-item">
+        <span class="status-icon">🃏</span>
+        <span class="status-value">8</span>
+        <span class="status-label">手牌</span>
+      </div>
+      <div class="status-item">
+        <span class="status-icon">📞</span>
+        <span class="status-value">3</span>
+        <span class="status-label">叫牌</span>
+      </div>
+      <div class="status-item">
+        <span class="status-icon">⛓️</span>
+        <span class="status-value">第3手</span>
+        <span class="status-label">深度</span>
+      </div>
+      <div class="status-item">
+        <span class="status-icon">🏆</span>
+        <span class="status-value">第2回合</span>
+        <span class="status-label">战斗</span>
+      </div>
+    </div>
+    
+    <!-- 手牌 -->
+    <div class="player-hand">
+      <div class="player-card red"><span class="suit">♥</span><span class="rank">2</span></div>
+      <div class="player-card black selected"><span class="suit">♠</span><span class="rank">4</span></div>
+      <div class="player-card black"><span class="suit">♠</span><span class="rank">5</span></div>
+      <div class="player-card red"><span class="suit">♥</span><span class="rank">6</span></div>
+      <div class="player-card black"><span class="suit">♣</span><span class="rank">7</span></div>
+      <div class="player-card red"><span class="suit">♦</span><span class="rank">8</span></div>
+      <div class="player-card black"><span class="suit">♠</span><span class="rank">Q</span></div>
+      <div class="player-card red"><span class="suit">♦</span><span class="rank">A</span></div>
+    </div>
+    
+    <!-- 操作按钮 -->
+    <div class="action-bar">
+      <button class="btn btn-pass">跳过</button>
+      <button class="btn btn-call">📞 叫牌 (+6)</button>
+      <button class="btn btn-play">▶ 出牌</button>
+    </div>
+  </div>
+  
+  <!-- 回合信息 -->
+  <div class="round-info">
+    <div class="turn">🎯 你的回合</div>
+    <div>敌方手牌可见</div>
+  </div>
+  
+  <!-- 伤害弹出 -->
+  <div class="toast" id="damageToast" style="display:none;"></div>
+</div>
+
+<script>
+  // 简单的交互演示
+  document.querySelectorAll('.player-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.player-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+    });
+  });
+  
+  document.querySelector('.btn-play').addEventListener('click', () => {
+    const toast = document.getElementById('damageToast');
+    const dmg = Math.floor(Math.random() * 200 + 50);
+    toast.textContent = `💥 ${dmg} 伤害！`;
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 1500);
+  });
+</script>
+
+</body>
+</html>

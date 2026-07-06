@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "技能定义 Schema",
+  "description": "通用工作区模板的技能注册格式",
+  "type": "object",
+  "required": ["id", "name", "description", "prompt"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "技能唯一标识"
+    },
+    "name": {
+      "type": "string",
+      "description": "技能显示名称"
+    },
+    "description": {
+      "type": "string",
+      "description": "技能描述"
+    },
+    "triggers": {
+      "type": "array",
+      "description": "触发关键词列表",
+      "items": {
+        "type": "string"
+      }
+    },
+    "prompt": {
+      "type": "string",
+      "description": "技能的核心执行指引"
+    },
+    "tools": {
+      "type": "array",
+      "description": "技能允许使用的工具白名单",
+      "items": {
+        "type": "string"
+      }
+    },
+    "output_schema": {
+      "type": "object",
+      "description": "期望的输出结构"
+    },
+    "depends_on": {
+      "type": "array",
+      "description": "依赖的其他技能 ID",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Godot Mono
+.godot/mono/
+.mono/
+
+# Build output
+bin/
+obj/
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project-specific (workflow files are too large)
+项目文档/游戏设计/_验证报告/
+项目文档/游戏设计/工作流/
