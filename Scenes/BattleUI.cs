@@ -1,11 +1,22 @@
 using Godot;
 using GuandanKitty.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GuandanKitty;
 
+/// <summary>
+/// 战斗 UI —— 事件驱动，仅负责显示和动画。
+/// 逻辑由 Battle + BattleFSM 控制，UI 通过订阅事件被动响应。
+/// </summary>
 public partial class BattleUI : Control
 {
-    private BattleManager? _battle;
+    // ═══════════════════════════════════════════
+    //  组件引用
+    // ═══════════════════════════════════════════
+
+    private Battle? _battle;
     private Agent? _playerAgent;
 
     // UI 元素
@@ -18,7 +29,6 @@ public partial class BattleUI : Control
     private Label? _riverLabel;
 
     private HBoxContainer? _playerHand;
-    private HBoxContainer? _actionButtons;
     private Button? _playBtn;
     private Button? _callBtn;
     private Button? _passBtn;
@@ -27,13 +37,16 @@ public partial class BattleUI : Control
     private readonly HashSet<Card> _selectedCards = new();
     private PackedScene? _cardUiScene;
 
+    // ═══════════════════════════════════════════
+    //  生命周期
+    // ═══════════════════════════════════════════
+
     public override void _Ready()
     {
-        // 窗口大小由 project.godot 中的 1920×1080 控制
         _cardUiScene = ResourceLoader.Load<PackedScene>("res://Scenes/CardUI.tscn");
         _playerHand = GetNode<HBoxContainer>("PlayerHand");
         BuildUI();
-        StartBattle();
+        InitBattle();
     }
 
     private void BuildUI()
@@ -81,41 +94,33 @@ public partial class BattleUI : Control
         playerStatus.AddChild(_callCardCount);
 
         // === 操作按钮 ===
-        _actionButtons = new HBoxContainer();
-        _actionButtons.SetPosition(new Vector2(20, 740));
-        AddChild(_actionButtons);
+        var actionButtons = new HBoxContainer();
+        actionButtons.SetPosition(new Vector2(20, 740));
+        AddChild(actionButtons);
 
         _playBtn = new Button { Text = "▶ 出牌", Disabled = true };
         _playBtn.SetSize(new Vector2(160, 50));
         _playBtn.Pressed += OnPlayPressed;
-        _actionButtons.AddChild(_playBtn);
+        actionButtons.AddChild(_playBtn);
 
         _callBtn = new Button { Text = "📞 叫牌 (+6)", Disabled = true };
         _callBtn.SetSize(new Vector2(160, 50));
         _callBtn.Pressed += OnCallPressed;
-        _actionButtons.AddChild(_callBtn);
+        actionButtons.AddChild(_callBtn);
 
         _passBtn = new Button { Text = "跳过", Disabled = true };
         _passBtn.SetSize(new Vector2(120, 50));
         _passBtn.Pressed += OnPassPressed;
-        _actionButtons.AddChild(_passBtn);
+        actionButtons.AddChild(_passBtn);
     }
 
-    private void StartBattle()
-    {
-        _battle = new BattleManager();
-        _battle.StateChanged += OnStateChanged;
-        _battle.PlayerTurn += OnPlayerTurn;
-        _battle.EnemyTurn += OnEnemyTurn;
-        _battle.AgentPlayed += OnAgentPlayed;
-        _battle.AgentPassed += OnAgentPassed;
-        _battle.DamageDealt += OnDamageDealt;
-        _battle.RoundResult += OnRoundResult;
-        _battle.BattleEnded += OnBattleEnded;
-        _battle.HandUpdated += RefreshHandDisplay;
-        AddChild(_battle);
+    // ═══════════════════════════════════════════
+    //  初始化战斗
+    // ═══════════════════════════════════════════
 
-        // 创建玩家
+    private void InitBattle()
+    {
+        // 创建玩家 Agent
         var player = new Agent
         {
             Id = "玩家",
@@ -124,7 +129,7 @@ public partial class BattleUI : Control
         };
         player.Hands.Add(new HandZone());
 
-        // 创建敌人
+        // 创建敌人 Agent
         var enemy = new Agent
         {
             Id = "训练假人",
@@ -132,55 +137,92 @@ public partial class BattleUI : Control
         };
         enemy.Hands.Add(new HandZone());
         enemy.Monsters.Add(MonsterDatabase.CreateTestMonster());
+
         _playerAgent = player;
 
+        // 创建 Battle 节点
+        _battle = new Battle();
+        AddChild(_battle);
+
+        // 订阅事件
+        SubscribeBattleEvents();
+
+        // 启动战斗
         _battle.StartBattle(new List<Agent> { player, enemy });
     }
 
-    // ============ 信号处理 ============
-
-    private void OnStateChanged(string state, string message)
+    private void SubscribeBattleEvents()
     {
-        if (_statusLabel != null)
-            _statusLabel.Text = message;
+        if (_battle == null) return;
+
+        _battle.CardDrawRequested += OnCardDrawRequested;
+        _battle.StatusMessageChanged += OnStatusMessageChanged;
+        _battle.DamageDealt += OnDamageDealt;
+        _battle.HandUpdated += RefreshHandDisplay;
+        _battle.RiverUpdated += UpdateRiverDisplay;
+        _battle.AgentPlayed += OnAgentPlayed;
+        _battle.AgentPassed += OnAgentPassed;
+        _battle.RoundResult += OnRoundResult;
+        _battle.BattleEnded += OnBattleEnded;
+        _battle.EnemyHpChanged += OnEnemyHpChanged;
+        _battle.PlayerInputChanged += OnPlayerInputChanged;
     }
 
-    private void OnPlayerTurn()
+    // ═══════════════════════════════════════════
+    //  事件处理
+    // ═══════════════════════════════════════════
+
+    /// <summary>
+    /// 摸牌动画请求。创建卡牌从牌堆飞到手中的动画，完成后回调。
+    /// </summary>
+    private void OnCardDrawRequested(Card card, Action onComplete)
     {
-        if (_playBtn != null) _playBtn.Disabled = false;
-        if (_callBtn != null) _callBtn.Disabled = !_playerAgent!.CanCallCards;
-        if (_passBtn != null) _passBtn.Disabled = false;
-        // 清除所有卡牌选中状态
-        foreach (var cui in _cardUiList)
-            cui.SetSelected(false);
-        _selectedCards.Clear();
+        if (_playerHand == null || _cardUiScene == null)
+        {
+            onComplete();
+            return;
+        }
+
+        var cardUi = _cardUiScene.Instantiate<CardUi>();
+        cardUi.SetCard(card);
+        cardUi.CardToggled += OnCardToggled;
+
+        // 从牌堆位置飞到手牌区
+        var startPos = new Vector2(960, 540);
+        _playerHand.AddChild(cardUi);
+        _cardUiList.Add(cardUi);
+
+        // 用 tween 播放飞牌动画
+        var tween = CreateTween();
+        tween.TweenProperty(cardUi, "position", startPos, 0.0f);
+        var endOffset = new Vector2(_cardUiList.Count * 110 - 110, 0);
+        tween.TweenProperty(cardUi, "position",
+            _playerHand.GlobalPosition + endOffset, 0.25f)
+             .SetTrans(Tween.TransitionType.Quad)
+             .SetEase(Tween.EaseType.Out);
+        tween.Finished += onComplete;
     }
 
-    private void OnEnemyTurn(string agentId)
+    private void OnStatusMessageChanged(string msg)
     {
-        if (_playBtn != null) _playBtn.Disabled = true;
-        if (_callBtn != null) _callBtn.Disabled = true;
-        if (_passBtn != null) _passBtn.Disabled = true;
         if (_statusLabel != null)
-            _statusLabel.Text = $"{agentId} 思考中...";
+            _statusLabel.Text = msg;
+    }
+
+    private void OnDamageDealt(int damage, int remainingHP)
+    {
+        GD.Print($"[UI] 伤害: {damage}, 剩余 HP: {remainingHP}");
     }
 
     private void OnAgentPlayed(string agentId, string patternDesc, int cardCount)
     {
         GD.Print($"[UI] {agentId} 出牌: {patternDesc}");
-        UpdateRiverDisplay();
         UpdateEnemyHandDisplay();
     }
 
     private void OnAgentPassed(string agentId)
     {
         GD.Print($"[UI] {agentId} Pass");
-    }
-
-    private void OnDamageDealt(int damage, int remainingHP)
-    {
-        if (_enemyHP != null)
-            _enemyHP.Text = $"❤️ 敌人 HP: {remainingHP}  (-{damage})";
     }
 
     private void OnRoundResult(bool playerWon, string message)
@@ -192,9 +234,7 @@ public partial class BattleUI : Control
 
     private void OnBattleEnded(bool playerWon)
     {
-        if (_playBtn != null) _playBtn.Disabled = true;
-        if (_callBtn != null) _callBtn.Disabled = true;
-        if (_passBtn != null) _passBtn.Disabled = true;
+        EnableButtons(false);
 
         var resultLabel = new Label
         {
@@ -206,7 +246,6 @@ public partial class BattleUI : Control
         resultLabel.SetSize(new Vector2(300, 80));
         AddChild(resultLabel);
 
-        // 返回按钮
         var backBtn = new Button { Text = "返回主菜单" };
         backBtn.SetPosition(new Vector2(640, 450));
         backBtn.SetSize(new Vector2(200, 50));
@@ -214,20 +253,57 @@ public partial class BattleUI : Control
         AddChild(backBtn);
     }
 
-    // ============ 按钮回调 ============
+    private void OnEnemyHpChanged(int totalHP)
+    {
+        if (_enemyHP != null)
+            _enemyHP.Text = $"❤️ 敌人 HP: {totalHP}";
+    }
+
+    private void OnPlayerInputChanged(bool enabled)
+    {
+        EnableButtons(enabled);
+    }
+
+    private void UpdateEnemyHandDisplay()
+    {
+        if (_battle == null || _enemyHandLabel == null) return;
+        var enemy = _battle.Agents.FirstOrDefault(a => a.IsEnemy);
+        if (enemy == null)
+        {
+            _enemyHandLabel.Text = "[敌方手牌]";
+            return;
+        }
+        var cards = string.Join(" ", enemy.Hands[0].Cards.Select(c => c.ToString()));
+        _enemyHandLabel.Text = $"[敌方手牌] {cards} (共{enemy.Hands[0].Count}张)";
+    }
+
+    private void UpdateRiverDisplay()
+    {
+        if (_battle == null || _riverLabel == null) return;
+        var entries = _battle.River.Entries;
+        if (entries.Count == 0)
+        {
+            _riverLabel.Text = "[牌河]";
+            return;
+        }
+        var parts = entries.Select(e =>
+            $"[{(e.Agent.IsPlayer ? "你" : "敌")}] {e.Pattern}");
+        _riverLabel.Text = string.Join("  →  ", parts);
+    }
+
+    // ═══════════════════════════════════════════
+    //  按钮回调
+    // ═══════════════════════════════════════════
 
     private void OnPlayPressed()
     {
         if (_battle == null) return;
-
         var cards = new List<Card>(_selectedCards);
         if (cards.Count == 0) return;
 
         var error = _battle.PlayerPlay(cards);
-        if (error != null)
-        {
-            if (_statusLabel != null) _statusLabel.Text = error;
-        }
+        if (error != null && _statusLabel != null)
+            _statusLabel.Text = error;
     }
 
     private void OnCallPressed()
@@ -255,19 +331,19 @@ public partial class BattleUI : Control
             _selectedCards.Remove(cardUi.Card);
     }
 
-    // ============ UI 刷新 ============
+    // ═══════════════════════════════════════════
+    //  UI 刷新
+    // ═══════════════════════════════════════════
 
     private void RefreshHandDisplay()
     {
         if (_playerAgent == null || _playerHand == null) return;
 
-        // 清空旧卡牌
         foreach (var cui in _cardUiList)
             cui.QueueFree();
         _cardUiList.Clear();
         _selectedCards.Clear();
 
-        // 创建新的 CardUI 实例
         if (_cardUiScene != null)
         {
             foreach (var card in _playerAgent.Hands[0].Cards)
@@ -280,46 +356,25 @@ public partial class BattleUI : Control
             }
         }
 
-        // 更新状态信息
         if (_playerDeckCount != null)
             _playerDeckCount.Text = $"📇 牌堆: {_playerAgent.Deck?.Count ?? 0}";
         if (_callCardCount != null)
             _callCardCount.Text = $"📞 叫牌剩余: {_playerAgent.RemainingCallCards}";
         if (_chainDepth != null && _battle != null)
             _chainDepth.Text = $"⛓️ 接龙深度: ×{_battle.Chain.DepthMultiplier} (第{_battle.Chain.PlayerHandCount + 1}手)";
-
-        if (_enemyHP != null && _battle != null)
-            _enemyHP.Text = $"❤️ 敌人 HP: {_battle.TotalEnemyHP}";
     }
 
-    private void UpdateRiverDisplay()
+    private void EnableButtons(bool enabled)
     {
-        if (_battle == null || _riverLabel == null) return;
-        var entries = _battle.River.Entries;
-        if (entries.Count == 0)
-        {
-            _riverLabel.Text = "[牌河]";
-            return;
-        }
-        var parts = entries.Select(e =>
-            $"[{(e.Agent.IsPlayer ? "你" : "敌")}] {e.Pattern}");
-        _riverLabel.Text = string.Join("  →  ", parts);
+        if (_playBtn != null) _playBtn.Disabled = !enabled;
+        if (_callBtn != null)
+            _callBtn.Disabled = !enabled || (_playerAgent != null && !_playerAgent.CanCallCards);
+        if (_passBtn != null) _passBtn.Disabled = !enabled;
     }
 
-    private void UpdateEnemyHandDisplay()
-    {
-        if (_battle == null || _enemyHandLabel == null) return;
-        var enemy = _battle.Agents.FirstOrDefault(a => a.IsEnemy);
-        if (enemy == null)
-        {
-            _enemyHandLabel.Text = "[敌方手牌]";
-            return;
-        }
-        var cards = string.Join(" ", enemy.Hands[0].Cards.Select(c => c.ToString()));
-        _enemyHandLabel.Text = $"[敌方手牌] {cards} (共{enemy.Hands[0].Count}张)";
-    }
-
-    // ============ 工具方法 ============
+    // ═══════════════════════════════════════════
+    //  工具方法
+    // ═══════════════════════════════════════════
 
     private static Label MakeLabel(string text, int fontSize)
     {

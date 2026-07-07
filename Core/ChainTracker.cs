@@ -9,6 +9,7 @@ public class ChainTracker
     public CardPattern? LastPlayed { get; private set; } // 上一手出的牌型
     public Agent? LastPlayedBy { get; private set; }     // 上一手是哪个 Agent
     public List<Agent> PassedAgents { get; } = new();    // 本回合已 Pass 的 Agent
+    public bool ClearHandPlayed { get; internal set; }   // 本回合是否清空手牌
 
     /// <summary>
     /// 接龙深度倍率 = 2^(玩家出牌次数-1)
@@ -35,5 +36,6 @@ public class ChainTracker
         LastPlayed = null;
         LastPlayedBy = null;
         PassedAgents.Clear();
+        ClearHandPlayed = false;
     }
 }
