@@ -17,18 +17,21 @@ public partial class BattleUI : Control
     private Label? _enemyHandLabel;
     private Label? _riverLabel;
 
-    private VBoxContainer? _playerHandContainer;
+    private HBoxContainer? _playerHand;
     private HBoxContainer? _actionButtons;
     private Button? _playBtn;
     private Button? _callBtn;
     private Button? _passBtn;
 
-    private readonly List<Button> _cardButtons = new();
+    private readonly List<CardUi> _cardUiList = new();
     private readonly HashSet<Card> _selectedCards = new();
+    private PackedScene? _cardUiScene;
 
     public override void _Ready()
     {
         // 窗口大小由 project.godot 中的 1920×1080 控制
+        _cardUiScene = ResourceLoader.Load<PackedScene>("res://Scenes/CardUI.tscn");
+        _playerHand = GetNode<HBoxContainer>("PlayerHand");
         BuildUI();
         StartBattle();
     }
@@ -64,19 +67,6 @@ public partial class BattleUI : Control
         _riverLabel.HorizontalAlignment = HorizontalAlignment.Center;
         _riverLabel.SetSize(new Vector2(1240, 30));
         AddChild(_riverLabel);
-
-        // === 玩家手牌区（底部） ===
-        _playerHandContainer = new VBoxContainer();
-        _playerHandContainer.SetPosition(new Vector2(20, 500));
-        _playerHandContainer.SetSize(new Vector2(1240, 200));
-        AddChild(_playerHandContainer);
-
-        var handTitle = MakeLabel("[你的手牌] 点击选择，再次点击取消", 14);
-        _playerHandContainer.AddChild(handTitle);
-
-        // 卡牌容器
-        var cardRow = new HBoxContainer { Name = "CardRow" };
-        _playerHandContainer.AddChild(cardRow);
 
         // === 玩家状态栏 ===
         var playerStatus = new HBoxContainer();
@@ -160,6 +150,9 @@ public partial class BattleUI : Control
         if (_playBtn != null) _playBtn.Disabled = false;
         if (_callBtn != null) _callBtn.Disabled = !_playerAgent!.CanCallCards;
         if (_passBtn != null) _passBtn.Disabled = false;
+        // 清除所有卡牌选中状态
+        foreach (var cui in _cardUiList)
+            cui.SetSelected(false);
         _selectedCards.Clear();
     }
 
@@ -253,52 +246,38 @@ public partial class BattleUI : Control
             _statusLabel.Text = error;
     }
 
-    private void OnCardClicked(Card card, Button button)
+    private void OnCardToggled(CardUi cardUi, bool selected)
     {
-        if (_selectedCards.Contains(card))
-        {
-            _selectedCards.Remove(card);
-            button.Modulate = Colors.White;
-        }
+        if (cardUi.Card == null) return;
+        if (selected)
+            _selectedCards.Add(cardUi.Card);
         else
-        {
-            _selectedCards.Add(card);
-            button.Modulate = new Color(1.0f, 0.9f, 0.3f);
-        }
+            _selectedCards.Remove(cardUi.Card);
     }
 
     // ============ UI 刷新 ============
 
     private void RefreshHandDisplay()
     {
-        if (_playerAgent == null || _playerHandContainer == null) return;
+        if (_playerAgent == null || _playerHand == null) return;
 
-        // 清空旧卡牌按钮
-        var cardRow = _playerHandContainer.GetNode<HBoxContainer>("CardRow");
-        foreach (var btn in _cardButtons)
-            btn.QueueFree();
-        _cardButtons.Clear();
+        // 清空旧卡牌
+        foreach (var cui in _cardUiList)
+            cui.QueueFree();
+        _cardUiList.Clear();
         _selectedCards.Clear();
 
-        // 创建新卡牌按钮
-        foreach (var card in _playerAgent.Hands[0].Cards)
+        // 创建新的 CardUI 实例
+        if (_cardUiScene != null)
         {
-            var btn = new Button
+            foreach (var card in _playerAgent.Hands[0].Cards)
             {
-                Text = $"{card.SuitSymbol}{card.RankSymbol}",
-                Size = new Vector2(80, 110),
-            };
-            btn.AddThemeFontSizeOverride("font_size", 20);
-
-            var color = card.IsRed ? new Color(0.8f, 0.2f, 0.2f) : new Color(0.2f, 0.2f, 0.2f);
-            btn.AddThemeColorOverride("font_color", color);
-
-            Card captured = card;
-            Button capturedBtn = btn;
-            btn.Pressed += () => OnCardClicked(captured, capturedBtn);
-
-            cardRow.AddChild(btn);
-            _cardButtons.Add(btn);
+                var cardUi = _cardUiScene.Instantiate<CardUi>();
+                cardUi.SetCard(card);
+                cardUi.CardToggled += OnCardToggled;
+                _playerHand.AddChild(cardUi);
+                _cardUiList.Add(cardUi);
+            }
         }
 
         // 更新状态信息
