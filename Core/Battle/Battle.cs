@@ -44,7 +44,7 @@ public partial class Battle : Node
     /// <summary>玩家输入是否启用</summary>
     public bool IsPlayerInputEnabled { get; private set; }
 
-    /// <summary>UI 引用，由 BattleUI 创建后注入</summary>
+    /// <summary>UI 引用，场景加载后自动从父节点获取</summary>
     public BattleUI? UI { get; set; }
 
     /// <summary>Turn 子状态机，处理一轮内的 Judge→Act→Resolve→Advance</summary>
@@ -69,6 +69,9 @@ public partial class Battle : Node
 
     public override void _Ready()
     {
+        // 自动获取 UI 引用
+        UI = GetParent<BattleUI>();
+
         Turn = new TurnFSM(this);
 
         _fsm = new BattleFSM();
@@ -82,16 +85,45 @@ public partial class Battle : Node
         _fsm.AddState(new RoundEndState());
         _fsm.AddState(new BattleEndState());
 
-        _fsm.TransitionTo<InitState>();
+        // 从 Run 获取玩家数据，创建测试敌人，自动开始
+        AutoStartBattle();
     }
 
-    /// <summary>启动战斗，由外部（UI 或 RunManager）调用</summary>
-    public void StartBattle(List<Agent> agents)
+    /// <summary>
+    /// 自动开始战斗：从 Run.PlayerData 创建玩家 Agent，创建测试敌人。
+    /// 后续由外线系统传入真实敌人配置。
+    /// </summary>
+    private void AutoStartBattle()
     {
+        var playerData = Run.Instance.PlayerData;
+        if (playerData == null) return;
+
+        // 从 Player 的牌组创建战斗用的 Agent
+        var playerAgent = new Agent
+        {
+            Id = "玩家",
+            Type = AgentType.Player,
+            Deck = playerData.Deck,
+        };
+        playerAgent.Hands.Add(new HandZone());
+
+        // 创建测试敌人
+        var enemy = new Agent
+        {
+            Id = "训练假人",
+            Type = AgentType.Enemy,
+        };
+        enemy.Hands.Add(new HandZone());
+        enemy.Monsters.Add(MonsterDatabase.CreateTestMonster());
+
         Agents.Clear();
-        Agents.AddRange(agents);
+        Agents.Add(playerAgent);
+        Agents.Add(enemy);
+
         CurrentAgentIndex = 0;
         _lastPlayerPlayDamage = 0;
+
+        _fsm.TransitionTo<InitState>();
     }
 
     // ═══════════════════════════════════════════

@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dq26v5aelbqw2" path="res://Scenes/BattleUI.cs" id="1_battle"]
 [ext_resource type="Texture2D" uid="uid://cfuvdo8n34iu8" path="res://Resources/Table.png" id="2_hip74"]
 [ext_resource type="PackedScene" uid="uid://bcf6xt6y4ienp" path="res://Scenes/CardUI.tscn" id="3_b2eky"]
+[ext_resource type="Script" uid="" path="res://Core/Battle/Battle.cs" id="4_battle"]
 
 [node name="BattleScene" type="Control" unique_id=282815023]
 custom_minimum_size = Vector2(1920, 1080)
@@ -23,6 +24,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_hip74")
+
+[node name="Battle" type="Node" parent="."]
+script = ExtResource("4_battle")
 
 [node name="PlayerHand" type="HBoxContainer" parent="." unique_id=110681701]
 layout_mode = 1

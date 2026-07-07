@@ -60,7 +60,8 @@ public partial class MainScene : Control
 
     private void OnStartPressed()
     {
-        // 切换到战斗场景
-        GetTree().ChangeSceneToFile("res://Scenes/BattleScene.tscn");
+        // 初始化 Run 并启动战斗
+        Run.Instance.Initialize();
+        Run.Instance.StartBattle();
     }
 }

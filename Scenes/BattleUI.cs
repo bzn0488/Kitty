@@ -95,29 +95,9 @@ public partial class BattleUI : Control
 
     private void InitBattle()
     {
-        var player = new Agent
-        {
-            Id = "玩家",
-            Type = AgentType.Player,
-            Deck = new StandardDeck(),
-        };
-        player.Hands.Add(new HandZone());
-
-        var enemy = new Agent
-        {
-            Id = "训练假人",
-            Type = AgentType.Enemy,
-        };
-        enemy.Hands.Add(new HandZone());
-        enemy.Monsters.Add(MonsterDatabase.CreateTestMonster());
-
-        _playerAgent = player;
-
-        _battle = new Battle();
-        _battle.UI = this;              // ← 注入 UI 引用
-        AddChild(_battle);
-
-        _battle.StartBattle(new List<Agent> { player, enemy });
+        // Battle 节点已在场景中预置，由它自己启动并读取 Run 的数据
+        _battle = GetNode<Battle>("Battle");
+        _playerAgent = _battle?.PlayerAgent;
     }
 
     // ═══════════════════════════════════════════
