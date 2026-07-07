@@ -100,14 +100,6 @@ public abstract class BattleState
 //  状态实现 —— 每个状态只做回调分发，无游戏逻辑
 // ═════════════════════════════════════════════════
 
-/// <summary>1. 逻辑初始化</summary>
-class InitState : BattleState
-{
-    public override void OnEnter()
-    {
-        Battle.OnInit();
-    }
-}
 
 /// <summary>2. 战斗开始（布置 + 抽起始手牌）</summary>
 class BattleStartState : BattleState
@@ -159,7 +151,7 @@ class AgentTurnState : BattleState
     }
 }
 
-/// <summary>5. 回合结算</summary>
+/// <summary>4. 回合结算</summary>
 class RoundSettlementState : BattleState
 {
     public override void OnEnter()
@@ -168,7 +160,7 @@ class RoundSettlementState : BattleState
     }
 }
 
-/// <summary>6. 回合结束</summary>
+/// <summary>5. 回合结束</summary>
 class RoundEndState : BattleState
 {
     public override void OnEnter()
@@ -182,7 +174,7 @@ class RoundEndState : BattleState
     }
 }
 
-/// <summary>7. 战斗结束</summary>
+/// <summary>6. 战斗结束</summary>
 class BattleEndState : BattleState
 {
     public override void OnEnter()

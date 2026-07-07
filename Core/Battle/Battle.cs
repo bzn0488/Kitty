@@ -77,7 +77,6 @@ public partial class Battle : Node
         _fsm = new BattleFSM();
         AddChild(_fsm);
 
-        _fsm.AddState(new InitState());
         _fsm.AddState(new BattleStartState());
         _fsm.AddState(new RoundStartState());
         _fsm.AddState(new AgentTurnState());
@@ -123,7 +122,13 @@ public partial class Battle : Node
         CurrentAgentIndex = 0;
         _lastPlayerPlayDamage = 0;
 
-        _fsm.TransitionTo<InitState>();
+        // 初始化牌堆、状态
+        InitializeAgentDecks();
+        ResetAgentRoundStates();
+        ResetPlayerCallCounts();
+
+        // FSM 直接从 BattleStartState 开始
+        _fsm.TransitionTo<BattleStartState>();
     }
 
     // ═══════════════════════════════════════════
@@ -162,16 +167,7 @@ public partial class Battle : Node
     //  状态机回调 —— 由各个状态 OnEnter/Update 调用
     // ═══════════════════════════════════════════
 
-    // ────────── Init ──────────
 
-    /// <summary>初始化战斗：准备牌堆、重置 Agent 状态、重置叫牌次数</summary>
-    public void OnInit()
-    {
-        InitializeAgentDecks();
-        ResetAgentRoundStates();
-        ResetPlayerCallCounts();
-        _fsm.TransitionTo<BattleStartState>();
-    }
 
     // ────────── BattleStart ──────────
 
