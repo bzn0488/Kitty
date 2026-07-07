@@ -60,6 +60,7 @@ public partial class BattleManager : Node
         }
 
         EmitSignal(SignalName.BattleStarted);
+        EmitSignal(SignalName.HandUpdated);
         BeginRound();
     }
 

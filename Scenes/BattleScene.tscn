@@ -31,13 +31,18 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -519.0
-offset_top = -201.0
-offset_right = 519.0
-offset_bottom = -11.0
+offset_left = -525.0
+offset_top = -206.0
+offset_right = 525.0
+offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_constants/separation = -95
+alignment = 1
 metadata/_edit_group_ = true
 
-[node name="Card" parent="PlayerHand" unique_id=2145254723 instance=ExtResource("3_b2eky")]
+[node name="Card" parent="PlayerHand" unique_id=1916286882 instance=ExtResource("3_b2eky")]
+layout_mode = 2
+
+[node name="Card2" parent="PlayerHand" unique_id=2145254723 instance=ExtResource("3_b2eky")]
 layout_mode = 2
