@@ -89,45 +89,24 @@ public partial class Battle : Node
     }
 
     /// <summary>
-    /// 自动开始战斗：从 Run.PlayerData 创建玩家 Agent，创建测试敌人。
-    /// 后续由外线系统传入真实敌人配置。
+    /// 自动开始战斗：用工厂方法创建玩家 Agent 和测试敌人 Agent，启动 FSM。
     /// </summary>
     private void AutoStartBattle()
     {
         var playerData = Run.Instance.PlayerData;
         if (playerData == null) return;
 
-        // 从 Player 的牌组创建战斗用的 Agent
-        var playerAgent = new Agent
-        {
-            Id = "玩家",
-            Type = AgentType.Player,
-            Deck = playerData.Deck,
-        };
-        playerAgent.Hands.Add(new HandZone());
-
-        // 创建测试敌人
-        var enemy = new Agent
-        {
-            Id = "训练假人",
-            Type = AgentType.Enemy,
-        };
-        enemy.Hands.Add(new HandZone());
-        enemy.Monsters.Add(MonsterDatabase.CreateTestMonster());
-
         Agents.Clear();
-        Agents.Add(playerAgent);
-        Agents.Add(enemy);
+        Agents.Add(Agent.SpawnAgentFromPlayer(playerData));
+        Agents.Add(Agent.SpawnAgentFromEnemy("训练假人",
+            new List<Monster> { MonsterDatabase.CreateTestMonster() }));
 
         CurrentAgentIndex = 0;
         _lastPlayerPlayDamage = 0;
 
-        // 初始化牌堆、状态
-        InitializeAgentDecks();
         ResetAgentRoundStates();
         ResetPlayerCallCounts();
 
-        // FSM 直接从 BattleStartState 开始
         _fsm.TransitionTo<BattleStartState>();
     }
 
@@ -537,15 +516,6 @@ public partial class Battle : Node
     // ═══════════════════════════════════════════
     //  私有封装方法 —— Init
     // ═══════════════════════════════════════════
-
-    /// <summary>初始化所有 Agent 的牌堆</summary>
-    private void InitializeAgentDecks()
-    {
-        foreach (var agent in Agents)
-        {
-            agent.Deck?.Initialize();
-        }
-    }
 
     /// <summary>重置所有 Agent 的回合 Pass 状态</summary>
     private void ResetAgentRoundStates()

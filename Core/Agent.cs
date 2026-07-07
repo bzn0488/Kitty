@@ -1,3 +1,5 @@
+using GuandanKitty;
+
 namespace GuandanKitty.Core;
 
 /// <summary>
@@ -33,6 +35,40 @@ public class Agent
     public bool CanCallCards => IsPlayer && RemainingCallCards > 0;
     public bool IsDefeated =>
         (Deck?.IsEmpty ?? true) && Hands.All(h => h.IsEmpty);
+
+    // ═══════════════════════════════════════════
+    //  工厂方法
+    // ═══════════════════════════════════════════
+
+    /// <summary>
+    /// 从外线 Player 衍生一个玩家 Agent（内线用，深拷贝牌组）。
+    /// </summary>
+    public static Agent SpawnAgentFromPlayer(Player player, string id = "玩家")
+    {
+        var agent = new Agent
+        {
+            Id = id,
+            Type = AgentType.Player,
+            Deck = player.Deck.Clone(),
+        };
+        agent.Hands.Add(new HandZone());
+        return agent;
+    }
+
+    /// <summary>
+    /// 创建一个敌方 Agent，挂载指定怪物列表。
+    /// </summary>
+    public static Agent SpawnAgentFromEnemy(string id, List<Monster> monsters)
+    {
+        var agent = new Agent
+        {
+            Id = id,
+            Type = AgentType.Enemy,
+        };
+        agent.Hands.Add(new HandZone());
+        agent.Monsters.AddRange(monsters);
+        return agent;
+    }
 }
 
 /// <summary>

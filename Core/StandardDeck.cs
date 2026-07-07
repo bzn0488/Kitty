@@ -23,6 +23,16 @@ public class StandardDeck
         Shuffle();
     }
 
+    /// <summary>
+    /// 深拷贝——创建内容相同、顺序相同的新牌堆（Card 不可变，复用实例）。
+    /// </summary>
+    public StandardDeck Clone()
+    {
+        var clone = new StandardDeck();
+        clone._cards.AddRange(_cards);
+        return clone;
+    }
+
     public void Shuffle()
     {
         for (int i = _cards.Count - 1; i > 0; i--)
