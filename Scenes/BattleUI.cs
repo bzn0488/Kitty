@@ -28,9 +28,7 @@ public partial class BattleUI : Control
 
     public override void _Ready()
     {
-        // 设置窗口大小
-        GetWindow().SetSize(new Vector2I(1280, 800));
-
+        // 窗口大小由 project.godot 中的 1920×1080 控制
         BuildUI();
         StartBattle();
     }
