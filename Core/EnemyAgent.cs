@@ -24,7 +24,6 @@ public class EnemyAgent : Agent
     public EnemyAgent(Battle battle, string id, List<Monster> monsters)
         : base(battle, id)
     {
-        Hands.Add(new HandZone());
         Monsters.AddRange(monsters);
     }
 
@@ -41,7 +40,7 @@ public class EnemyAgent : Agent
         {
             for (int i = 0; i < 3; i++)
             {
-                Hands[0].Add(monster.DrawFromPool(rng));
+                Hand.Add(monster.DrawFromPool(rng));
             }
         }
     }
@@ -55,7 +54,7 @@ public class EnemyAgent : Agent
         {
             for (int i = 0; i < monster.DrawsPerRound; i++)
             {
-                Hands[0].Add(monster.DrawFromPool(rng));
+                Hand.Add(monster.DrawFromPool(rng));
             }
         }
     }
@@ -94,10 +93,10 @@ public class EnemyAgent : Agent
         {
             if (monster.DefeatEffect == null) continue;
 
-            var toRemove = monster.DefeatEffect.SelectCardsToRemove(player.Hands[0]);
+            var toRemove = monster.DefeatEffect.SelectCardsToRemove(player.Hand);
             if (toRemove.Count == 0) continue;
 
-            player.Hands[0].Remove(toRemove);
+            player.Hand.Remove(toRemove);
             player.Deck.RemovePermanently(toRemove);
             totalRemoved += toRemove.Count;
         }
@@ -105,7 +104,7 @@ public class EnemyAgent : Agent
         if (totalRemoved > 0)
         {
             var drawn = player.Deck.Draw(totalRemoved);
-            player.Hands[0].AddRange(drawn);
+            player.Hand.AddRange(drawn);
         }
     }
 
@@ -114,32 +113,26 @@ public class EnemyAgent : Agent
     // ═══════════════════════════════════════════
 
     /// <summary>
-    /// 在所有手牌区中寻找能压制 target 的牌型。
-    /// 返回 (handIndex, pattern) 或 null（Pass）。
+    /// 在手牌中寻找能压制 target 的牌型。
+    /// 返回 pattern 或 null（Pass）。
     /// 策略：选 CompareValue 最小的合法牌型。
     /// </summary>
-    public (int handIndex, CardPattern pattern)? FindBestPlay(CardPattern target)
+    public CardPattern? FindBestPlay(CardPattern target)
     {
+        var candidates = FindAllValidPlays(Hand, target);
         CardPattern? bestPattern = null;
-        int bestHandIdx = 0;
 
-        for (int h = 0; h < Hands.Count; h++)
+        foreach (var p in candidates)
         {
-            var candidates = FindAllValidPlays(Hands[h], target);
-            foreach (var p in candidates)
+            if (bestPattern == null ||
+                p.CompareValue < bestPattern.CompareValue ||
+                (p.CompareValue == bestPattern.CompareValue && p.CardCount < bestPattern.CardCount))
             {
-                if (bestPattern == null ||
-                    p.CompareValue < bestPattern.CompareValue ||
-                    (p.CompareValue == bestPattern.CompareValue && p.CardCount < bestPattern.CardCount))
-                {
-                    bestPattern = p;
-                    bestHandIdx = h;
-                }
+                bestPattern = p;
             }
         }
 
-        if (bestPattern == null) return null;
-        return (bestHandIdx, bestPattern);
+        return bestPattern;
     }
 
     /// <summary>

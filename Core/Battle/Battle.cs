@@ -314,8 +314,8 @@ public class Battle
             var result = enemy.FindBestPlay(Chain.LastPlayed);
             if (result != null)
             {
-                var (handIdx, pattern) = result.Value;
-                agent.Hands[handIdx].Remove(pattern.Cards);
+                var pattern = result;
+                agent.Hand.Remove(pattern.Cards);
                 River.Add(pattern, agent);
                 Chain.RecordPlay(pattern, agent);
                 NotifyAgentPlayed(agent.Id, pattern.ToString(), pattern.CardCount);
@@ -355,9 +355,9 @@ public class Battle
             return "无法压制上一手牌";
         }
 
-        player.Hands[0].Remove(cards);
+        player.Hand.Remove(cards);
 
-        bool isClearHand = player.Hands[0].IsEmpty;
+        bool isClearHand = player.Hand.IsEmpty;
         int damage = DamageCalculator.Calculate(
             pattern,
             Chain.DepthMultiplier,
@@ -422,7 +422,7 @@ public class Battle
         if (!player.CanCallCards) return "叫牌次数已用完";
 
         var drawn = player.CallCards();
-        player.Hands[0].AddRange(drawn);
+        player.Hand.AddRange(drawn);
         NotifyHandUpdated();
         return null;
     }
@@ -451,7 +451,7 @@ public class Battle
             var player = PlayerAgent!;
             Chain.ClearHandPlayed = true;
             var drawn = player.Deck!.Draw(8);
-            player.Hands[0].AddRange(drawn);
+            player.Hand.AddRange(drawn);
             NotifyHandUpdated();
             IsRoundOver = true;
             _fsm.RaiseTurnComplete();
@@ -523,7 +523,7 @@ public class Battle
     {
         var player = PlayerAgent!;
         var drawn = player.DrawFromDeck(8);
-        player.Hands[0].AddRange(drawn);
+        player.Hand.AddRange(drawn);
     }
 
     // ═══════════════════════════════════════════
@@ -722,7 +722,7 @@ public class Battle
         }
         else
         {
-            enemyHandText = $"[敌方手牌] {string.Join(" ", enemy.Hands[0].Cards.Select(c => c))} (共{enemy.Hands[0].Count}张)";
+            enemyHandText = $"[敌方手牌] {string.Join(" ", enemy.Hand.Cards.Select(c => c))} (共{enemy.Hand.Count}张)";
         }
 
         _ui.OnRiverUpdated(riverText, enemyHandText);

@@ -273,7 +273,7 @@ public partial class BattleUI : Control
 
         if (_cardUiScene != null)
         {
-            foreach (var card in _playerAgent.Hands[0].Cards)
+            foreach (var card in _playerAgent.Hand.Cards)
             {
                 var cardUi = _cardUiScene.Instantiate<CardUi>();
                 cardUi.SetCard(card);

@@ -27,7 +27,7 @@ public class PlayerAgent : Agent
     /// 牌堆为空且所有手牌区为空时战败。
     /// </summary>
     public override bool IsDefeated =>
-        Deck.IsEmpty && Hands.All(h => h.IsEmpty);
+        Deck.IsEmpty && Hand.IsEmpty;
 
     /// <summary>
     /// 从 Run 的 Player 数据创建玩家 Agent（深拷贝牌组）。
@@ -36,7 +36,6 @@ public class PlayerAgent : Agent
         : base(battle, id)
     {
         Deck = deck.Clone();
-        Hands.Add(new HandZone());
     }
 
     /// <summary>

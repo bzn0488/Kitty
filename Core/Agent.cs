@@ -11,8 +11,8 @@ public abstract class Agent
     /// <summary>标识符</summary>
     public string Id { get; set; } = "";
 
-    /// <summary>手牌区列表（支持多手牌）</summary>
-    public List<HandZone> Hands { get; } = new();
+    /// <summary>手牌区</summary>
+    public HandZone Hand { get; } = new();
 
     /// <summary>所属 Battle</summary>
     public Battle Battle { get; }
