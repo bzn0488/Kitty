@@ -36,6 +36,7 @@ public partial class BattleFSM : Node
     {
         CurrentState?.OnExit();
         CurrentState = _states[typeof(T)];
+        GD.Print($"[BattleFSM] → {typeof(T).Name}");
         CurrentState.OnEnter();
     }
 

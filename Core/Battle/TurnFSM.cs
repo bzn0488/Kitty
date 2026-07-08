@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Godot;
 using GuandanKitty.Core;
 
 namespace GuandanKitty;
@@ -40,6 +41,7 @@ public class TurnFSM
     {
         CurrentState?.OnExit();
         CurrentState = _states[typeof(T)];
+        GD.Print($"[TurnFSM] → {typeof(T).Name}");
         CurrentState.OnEnter();
     }
 
