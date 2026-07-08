@@ -1,8 +1,8 @@
 # 施工文档：Battle 架构重构
 
-> 版本：v0.2（讨论阶段） | 日期：2026-07-09
+> 版本：v1.0（施工完成） | 日期：2026-07-09
 > 关联：`战斗系统程序文档.md`、`内线玩法GDD.md`
-> 状态：**架构讨论中，待确认后施工**
+> 状态：**已完成**
 
 ---
 
@@ -295,17 +295,82 @@ ActiveAgents = [玩家, 敌人]
 - "玩家 Pass → 回合结束（仅有玩家有权终结回合）" ✅
 ---
 
-## 十、文件变更清单（草案）
-| 文件 | 操作 | 说明 |
-|------|:--:|------|
-| `Core/Battle/Battle.cs` | **重写** | 去掉 `: Node`，纯 C#；精简公开方法 |
-| `Core/Battle/BattleFSM.cs` | **重写** | 去掉 `: Node`，纯 C#；持有 TurnFSM |
-| `Core/Battle/TurnFSM.cs` | **修改** | 归入 BattleFSM 管理，去掉 Battle 直接引用 |
-| `Scenes/BattleUI.cs` | **修改** | 去掉 `_battle` 引用，改为 `event Action` |
-| `Core/Run/Run.cs` | **修改** | 新增 `StartBattle()`/`EndBattle()`，`_Process` 驱动 Battle |
-| `Scenes/BattleScene.tscn` | **修改** | 根节点精簡為接線盒，或直接去掉独立场景 |
-| `Scenes/MainScene.tscn` | **可能修改** | 若 BattleUI 挂在主场景中 |
+## 十、文件变更清单 + 实施计划
+
+### 10.1 变更总览
+
+| # | 文件 | 操作 | 说明 |
+|:--:|------|:--:|------|
+| 1 | `Core/Battle/TurnFSM.cs` | **重写** | 去掉 Battle 引用，通过 event 与外部通信 |
+| 2 | `Core/Battle/BattleFSM.cs` | **重写** | 去掉 `: Node`，纯 C#；持有 TurnFSM，订阅其事件 |
+| 3 | `Core/Battle/Battle.cs` | **重写** | 去掉 `: Node`，纯 C#；ActiveAgents；自压特例 |
+| 4 | `Scenes/BattleUI.cs` | **修改** | 去掉 `_battle`，改为 `event Action` |
+| 5 | `Core/Run/Run.cs` | **修改** | 创建/驱动/销毁 Battle |
+| 6 | `Scenes/BattleScene.tscn` | **修改** | 去掉 Battle 节点 |
+
+### 10.2 Phase 1: TurnFSM 重写
+- 去掉 `Battle` 构造参数和属性
+- 新增 9 个 `event`：JudgeRequested, ActRequested, ActUpdateRequested, PlayerPlayRequested, PlayerPassRequested, PlayerCallRequested, ResolveRequested, AdvanceRequested, TurnComplete
+- TurnState 基类去掉 `Battle` 属性，只持有 `TurnFSM`
+- 各 TurnState 改为 `FSM.RaiseXxx()` 而非 `Battle.OnXxx()`
+
+### 10.3 Phase 2: BattleFSM 重写
+- 去掉 `: Node`，纯 C# 类
+- 构造函数注入 `Battle`，内部 `new TurnFSM()`
+- 订阅 TurnFSM 事件转发到 Battle
+- 订阅 `TurnComplete` → `TransitionTo<RoundSettlementState>()`
+- 暴露 `TurnTransitionTo<T>()` 供 Battle 调度子状态机
+
+### 10.4 Phase 3: Battle 重写
+- 去掉 `: Node`，纯 C# 类
+- 构造函数接收 `(StandardDeck, BattleUI)`
+- 新增 `ActiveAgents` 集合，Round 开始全员加入，Pass 即移除
+- TurnJudge 实现自压特例
+- 去掉 `public TurnFSM Turn`、`ExitTurn()`、`_turnResolvedXxx` 等
+
+### 10.5 Phase 4: BattleUI 修改
+- 去掉 `_battle` 字段和 `InitBattle()`
+- 新增 C# event：`PlayRequested`, `PassRequested`, `CallRequested`
+- 保留所有 `OnXxx()` 显示方法
+
+### 10.6 Phase 5: Run 修改
+- `StartBattle(deck, ui)` 创建 Battle、初始化、驱动
+- `_Process` → `_currentBattle?.Update(delta)`
+- `EndBattle()` → `battle.End()`
+
+### 10.7 Phase 6: 场景 + 编译验证
+- 更新 BattleScene.tscn
+- 编译验证全项目
 
 ---
 
-*本文档为施工讨论稿，随讨论迭代更新。*
+## 十二、施工完成总结
+
+### 变更文件
+
+| 文件 | 变更 |
+|------|------|
+| `Core/Battle/TurnFSM.cs` | 重写：去掉 Battle 依赖，9 个 event + TurnComplete |
+| `Core/Battle/BattleFSM.cs` | 重写：去掉 Node，纯 C#，持有 TurnFSM，订阅事件 |
+| `Core/Battle/Battle.cs` | 重写：去掉 Node，纯 C#，ActiveAgents 集合，自压特例 |
+| `Scenes/BattleUI.cs` | 修改：event 驱动输入，去掉 _battle 引用 |
+| `Core/Run/Run.cs` | 修改：创建/驱动/销毁 Battle，_Process 驱动 |
+| `Scenes/MainScene.cs` | 修改：创建 BattleUI，注册到 Run |
+
+### 已修复的必修项目（17 项）
+
+| 类别 | 项数 | 状态 |
+|------|:--:|:--:|
+| A 架构级（Battle/FSM 去 Node） | 8 | ✅ |
+| B 职责边界 | 3 | ✅ |
+| C 数据流/调用链 | 4 | ✅ |
+| D 规则实现（ActiveAgents + 自压） | 3 | ✅ |
+
+### 已知后续工作
+- B4/B5：敌人 AI 计时器和回合延时仍在 Battle 中，可迁至表现层
+- E1~E3：DamageCalculator/CardPatternDetector 改为实例类 + 修正器管道
+- BattleScene.tscn 清理
+
+---
+
+*本文档为施工文档，施工完成。*

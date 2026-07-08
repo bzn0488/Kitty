@@ -6,9 +6,18 @@ public partial class MainScene : Control
 {
     private Button? _startButton;
     private Label? _titleLabel;
+    private BattleUI? _battleUI;
 
     public override void _Ready()
     {
+        // 创建 BattleUI（默认隐藏）
+        _battleUI = new BattleUI();
+        _battleUI.Hide();
+        AddChild(_battleUI);
+
+        // 注册到 Run
+        Run.Instance.SetBattleUI(_battleUI);
+
         // 标题
         _titleLabel = new Label
         {

@@ -1,28 +1,70 @@
 using System;
 using System.Collections.Generic;
-using Godot;
 using GuandanKitty.Core;
 
 namespace GuandanKitty;
 
 /// <summary>
-/// Turn 子状态机 —— 管理一"轮"的 Judge→Act→Resolve→Advance 生命周期。
-/// 所有游戏逻辑在 Battle 中实现，状态只做回调分发。
+/// Turn 子状态机 —— 管理一轮 Agent 的 Judge→Act→Resolve→Advance 循环。
+/// 由 BattleFSM 持有和驱动，通过事件与外部通信。不含游戏逻辑。
 /// </summary>
 public class TurnFSM
 {
-    /// <summary>持有 Battle 引用</summary>
-    public Battle Battle { get; }
+    // ═══════════════════════════════════════════
+    //  事件 —— BattleFSM 订阅，转发到 Battle
+    // ═══════════════════════════════════════════
+
+    /// <summary>TurnJudge 阶段回调</summary>
+    public event Action? JudgeRequested;
+
+    /// <summary>TurnAct 阶段回调</summary>
+    public event Action? ActRequested;
+
+    /// <summary>TurnAct Update 回调</summary>
+    public event Action<float>? ActUpdateRequested;
+
+    /// <summary>玩家出牌回调，返回错误信息或 null（成功）</summary>
+    public event Func<List<Card>, string?>? PlayerPlayRequested;
+
+    /// <summary>玩家 Pass 回调</summary>
+    public event Func<string?>? PlayerPassRequested;
+
+    /// <summary>玩家叫牌回调</summary>
+    public event Func<string?>? PlayerCallRequested;
+
+    /// <summary>TurnResolve 阶段回调</summary>
+    public event Action? ResolveRequested;
+
+    /// <summary>TurnAdvance 阶段回调</summary>
+    public event Action? AdvanceRequested;
+
+    /// <summary>本轮结束，通知 BattleFSM 转到 RoundSettlement</summary>
+    public event Action? TurnComplete;
+
+    // ═══════════════════════════════════════════
+    //  Turn 阶段数据（Battle 写入，TurnResolve 读取）
+    // ═══════════════════════════════════════════
+
+    /// <summary>上一手行动是否为 Pass</summary>
+    public bool LastActionWasPass { get; set; }
+
+    /// <summary>上一手行动是否清空了手牌</summary>
+    public bool LastActionIsClearHand { get; set; }
+
+    /// <summary>上一手行动的牌型</summary>
+    public CardPattern? LastActionPattern { get; set; }
+
+    // ═══════════════════════════════════════════
+    //  状态管理
+    // ═══════════════════════════════════════════
 
     /// <summary>当前状态</summary>
     public TurnState? CurrentState { get; private set; }
 
     private readonly Dictionary<Type, TurnState> _states = new();
 
-    public TurnFSM(Battle battle)
+    public TurnFSM()
     {
-        Battle = battle;
-
         AddState(new TurnJudgeState());
         AddState(new TurnActState());
         AddState(new TurnResolveState());
@@ -30,9 +72,9 @@ public class TurnFSM
     }
 
     /// <summary>注册一个 Turn 状态</summary>
-    public void AddState(TurnState state)
+    private void AddState(TurnState state)
     {
-        state.Initialize(this, Battle);
+        state.Initialize(this);
         _states[state.GetType()] = state;
     }
 
@@ -41,7 +83,6 @@ public class TurnFSM
     {
         CurrentState?.OnExit();
         CurrentState = _states[typeof(T)];
-        GD.Print($"[TurnFSM] → {typeof(T).Name}");
         CurrentState.OnEnter();
     }
 
@@ -75,11 +116,19 @@ public class TurnFSM
         return CurrentState?.HandlePlayerCall() ?? "现在不是你的回合";
     }
 
-    /// <summary>请求主 FSM 结束本轮，转到 RoundSettlement</summary>
-    public void RequestExitTurn()
-    {
-        Battle.ExitTurn();
-    }
+    // ═══════════════════════════════════════════
+    //  内部方法 —— 供 TurnState 触发事件
+    // ═══════════════════════════════════════════
+
+    internal void RaiseJudge() => JudgeRequested?.Invoke();
+    internal void RaiseAct() => ActRequested?.Invoke();
+    internal void RaiseActUpdate(float delta) => ActUpdateRequested?.Invoke(delta);
+    internal string? RaisePlayerPlay(List<Card> cards) => PlayerPlayRequested?.Invoke(cards);
+    internal string? RaisePlayerPass() => PlayerPassRequested?.Invoke();
+    internal string? RaisePlayerCall() => PlayerCallRequested?.Invoke();
+    internal void RaiseResolve() => ResolveRequested?.Invoke();
+    internal void RaiseAdvance() => AdvanceRequested?.Invoke();
+    internal void RaiseTurnComplete() => TurnComplete?.Invoke();
 }
 
 // ═════════════════════════════════════════════════
@@ -87,22 +136,18 @@ public class TurnFSM
 // ═════════════════════════════════════════════════
 
 /// <summary>
-/// Turn 子状态机的状态基类，与 BattleFSM.BattleState 对应。
-/// 禁止包含游戏逻辑，只做回调分发到 Battle。
+/// Turn 子状态机的状态基类。
+/// 禁止包含游戏逻辑，只做回调分发到 TurnFSM 事件。
 /// </summary>
 public abstract class TurnState
 {
     /// <summary>持有 TurnFSM 引用</summary>
     protected TurnFSM FSM { get; private set; } = null!;
 
-    /// <summary>持有 Battle 引用</summary>
-    protected Battle Battle { get; private set; } = null!;
-
     /// <summary>初始化引用</summary>
-    public void Initialize(TurnFSM fsm, Battle battle)
+    public void Initialize(TurnFSM fsm)
     {
         FSM = fsm;
-        Battle = battle;
     }
 
     /// <summary>进入状态时调用</summary>
@@ -134,73 +179,69 @@ public abstract class TurnState
 }
 
 // ═════════════════════════════════════════════════
-//  Turn 状态实现 —— 只做回调分发，无游戏逻辑
+//  Turn 状态实现 —— 只做事件触发，无游戏逻辑
 // ═════════════════════════════════════════════════
 
 /// <summary>
-/// Judge —— 判定阶段
-/// 跳过已 Pass 的 Agent；若其余全 Pass 则直接结算；否则进入 Act。
+/// Judge —— 判定阶段。检查活跃 Agent 数量，决定进 Act 还是结束回合。
 /// </summary>
 class TurnJudgeState : TurnState
 {
     public override void OnEnter()
     {
-        Battle.OnTurnJudge();
+        FSM.RaiseJudge();
     }
 }
 
 /// <summary>
-/// Act —— 行动阶段
-/// Player：等输入；Enemy：倒计时后 AI。
+/// Act —— 行动阶段。Player 等输入；Enemy 倒计时后 AI。
 /// </summary>
 class TurnActState : TurnState
 {
     public override void OnEnter()
     {
-        Battle.OnTurnAct();
+        FSM.RaiseAct();
     }
 
     public override void Update(float delta)
     {
-        Battle.OnTurnActUpdate(delta);
+        FSM.RaiseActUpdate(delta);
     }
 
     public override string? HandlePlayerPlay(List<Card> cards)
     {
-        return Battle.OnTurnPlayerPlay(cards);
+        return FSM.RaisePlayerPlay(cards);
     }
 
     public override string? HandlePlayerPass()
     {
-        return Battle.OnTurnPlayerPass();
+        return FSM.RaisePlayerPass();
     }
 
     public override string? HandlePlayerCall()
     {
-        return Battle.OnTurnPlayerCall();
+        return FSM.RaisePlayerCall();
     }
 }
 
 /// <summary>
-/// Resolve —— 结算阶段
-/// 处理行动结果：判断跳结算还是继续轮。
+/// Resolve —— 结算阶段。处理行动结果，判断继续轮还是结束回合。
 /// </summary>
 class TurnResolveState : TurnState
 {
     public override void OnEnter()
     {
-        Battle.OnTurnResolve();
+        FSM.RaiseResolve();
     }
 }
 
 /// <summary>
-/// Advance —— 推进阶段
-/// 索引前进到下一 Agent，回到 Judge 开始新一轮。
+/// Advance —— 推进阶段。索引前进到下一 Agent，回到 Judge。
 /// </summary>
 class TurnAdvanceState : TurnState
 {
     public override void OnEnter()
     {
-        Battle.OnTurnAdvance();
+        FSM.RaiseAdvance();
     }
 }

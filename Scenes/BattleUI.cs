@@ -7,12 +7,35 @@ using System.Linq;
 namespace GuandanKitty;
 
 /// <summary>
-/// 战斗 UI —— 纯显示层，方法由 Battle 直接调用。
+/// 战斗 UI —— 纯显示层，发射 C# event 通知 Battle，接收 Battle 调用来更新显示。
+/// 不持有 Battle 引用。
 /// </summary>
 public partial class BattleUI : Control
 {
-    private Battle? _battle;
+    // ═══════════════════════════════════════════
+    //  事件 —— Battle 订阅以接收玩家输入
+    // ═══════════════════════════════════════════
+
+    /// <summary>玩家请求出牌</summary>
+    public event Action<List<Card>>? PlayRequested;
+
+    /// <summary>玩家请求 Pass</summary>
+    public event Action? PassRequested;
+
+    /// <summary>玩家请求叫牌</summary>
+    public event Action? CallRequested;
+
+    // ═══════════════════════════════════════════
+    //  私有字段
+    // ═══════════════════════════════════════════
+
     private Agent? _playerAgent;
+    private int _deckCount;
+    private int _remainingCallCards;
+    private int _chainDepthMultiplier;
+    private int _chainPlayerHandCount;
+    private string _riverText = "[牌河]";
+    private string _enemyHandText = "[敌方手牌]";
 
     private Label? _statusLabel;
     private Label? _enemyHP;
@@ -34,9 +57,38 @@ public partial class BattleUI : Control
     public override void _Ready()
     {
         _cardUiScene = ResourceLoader.Load<PackedScene>("res://Scenes/CardUI.tscn");
-        _playerHand = GetNode<HBoxContainer>("PlayerHand");
+
+        // 创建手牌容器
+        _playerHand = new HBoxContainer();
+        _playerHand.SetPosition(new Vector2(20, 560));
+        AddChild(_playerHand);
+
         BuildUI();
-        InitBattle();
+        Hide();
+    }
+
+    /// <summary>
+    /// 设置玩家 Agent 引用（由 Battle 在初始化时调用）。
+    /// </summary>
+    public void SetPlayerAgent(Agent agent)
+    {
+        _playerAgent = agent;
+    }
+
+    /// <summary>
+    /// 显示战斗 UI。
+    /// </summary>
+    public void ShowBattle()
+    {
+        Show();
+    }
+
+    /// <summary>
+    /// 隐藏战斗 UI。
+    /// </summary>
+    public void HideBattle()
+    {
+        Hide();
     }
 
     private void BuildUI()
@@ -93,42 +145,37 @@ public partial class BattleUI : Control
         actionButtons.AddChild(_passBtn);
     }
 
-    private void InitBattle()
+    // ═══════════════════════════════════════════
+    //  按钮回调 —— 发射事件
+    // ═══════════════════════════════════════════
+
+    private void OnPlayPressed()
     {
-        // Battle 节点已在场景中预置，由它自己启动并读取 Run 的数据
-        _battle = GetNode<Battle>("Battle");
-        _playerAgent = _battle?.PlayerAgent;
+        var cards = new List<Card>(_selectedCards);
+        if (cards.Count == 0) return;
+        PlayRequested?.Invoke(cards);
+    }
+
+    private void OnCallPressed()
+    {
+        CallRequested?.Invoke();
+    }
+
+    private void OnPassPressed()
+    {
+        PassRequested?.Invoke();
+    }
+
+    private void OnCardToggled(CardUi cardUi, bool selected)
+    {
+        if (cardUi.Card == null) return;
+        if (selected) _selectedCards.Add(cardUi.Card);
+        else _selectedCards.Remove(cardUi.Card);
     }
 
     // ═══════════════════════════════════════════
-    //  以下方法由 Battle 直接调用
+    //  以下方法由 Battle 直接调用（显示更新）
     // ═══════════════════════════════════════════
-
-    /// <summary>摸牌动画：飞牌，播完后回调</summary>
-    public void OnCardDrawRequested(Card card, Action onComplete)
-    {
-        if (_playerHand == null || _cardUiScene == null)
-        {
-            onComplete();
-            return;
-        }
-
-        var cardUi = _cardUiScene.Instantiate<CardUi>();
-        cardUi.SetCard(card);
-        cardUi.CardToggled += OnCardToggled;
-
-        _playerHand.AddChild(cardUi);
-        _cardUiList.Add(cardUi);
-
-        // Tween 飞牌
-        var endOffset = new Vector2((_cardUiList.Count - 1) * 110, 0);
-        var tween = CreateTween();
-        tween.TweenProperty(cardUi, "position",
-            _playerHand.GlobalPosition + endOffset, 0.25f)
-             .SetTrans(Tween.TransitionType.Quad)
-             .SetEase(Tween.EaseType.Out);
-        tween.Finished += onComplete;
-    }
 
     public void OnStatusMessage(string msg)
     {
@@ -143,7 +190,6 @@ public partial class BattleUI : Control
     public void OnAgentPlayed(string agentId, string patternDesc, int cardCount)
     {
         GD.Print($"[UI] {agentId} 出牌: {patternDesc}");
-        UpdateEnemyHandDisplay();
     }
 
     public void OnAgentPassed(string agentId)
@@ -189,48 +235,28 @@ public partial class BattleUI : Control
         EnableButtons(enabled);
     }
 
-    public void OnHandUpdated()
+    /// <summary>
+    /// 更新手牌显示数据（由 Battle 调用）。
+    /// </summary>
+    public void OnHandUpdated(int deckCount, int remainingCallCards,
+        int chainDepthMultiplier, int chainPlayerHandCount)
     {
+        _deckCount = deckCount;
+        _remainingCallCards = remainingCallCards;
+        _chainDepthMultiplier = chainDepthMultiplier;
+        _chainPlayerHandCount = chainPlayerHandCount;
         RefreshHandDisplay();
     }
 
-    public void OnRiverUpdated()
+    /// <summary>
+    /// 更新牌河显示（由 Battle 调用）。
+    /// </summary>
+    public void OnRiverUpdated(string riverText, string enemyHandText)
     {
+        _riverText = riverText;
+        _enemyHandText = enemyHandText;
         UpdateRiverDisplay();
-    }
-
-    // ═══════════════════════════════════════════
-    //  按钮回调
-    // ═══════════════════════════════════════════
-
-    private void OnPlayPressed()
-    {
-        if (_battle == null) return;
-        var cards = new List<Card>(_selectedCards);
-        if (cards.Count == 0) return;
-        var err = _battle.PlayerPlay(cards);
-        if (err != null && _statusLabel != null) _statusLabel.Text = err;
-    }
-
-    private void OnCallPressed()
-    {
-        if (_battle == null) return;
-        var err = _battle.PlayerCallCards();
-        if (err != null && _statusLabel != null) _statusLabel.Text = err;
-    }
-
-    private void OnPassPressed()
-    {
-        if (_battle == null) return;
-        var err = _battle.PlayerPass();
-        if (err != null && _statusLabel != null) _statusLabel.Text = err;
-    }
-
-    private void OnCardToggled(CardUi cardUi, bool selected)
-    {
-        if (cardUi.Card == null) return;
-        if (selected) _selectedCards.Add(cardUi.Card);
-        else _selectedCards.Remove(cardUi.Card);
+        UpdateEnemyHandDisplay();
     }
 
     // ═══════════════════════════════════════════
@@ -258,28 +284,23 @@ public partial class BattleUI : Control
         }
 
         if (_playerDeckCount != null)
-            _playerDeckCount.Text = $"📇 牌堆: {_playerAgent.Deck?.Count ?? 0}";
+            _playerDeckCount.Text = $"📇 牌堆: {_deckCount}";
         if (_callCardCount != null)
-            _callCardCount.Text = $"📞 叫牌剩余: {_playerAgent.RemainingCallCards}";
-        if (_chainDepth != null && _battle != null)
-            _chainDepth.Text = $"⛓️ 接龙深度: ×{_battle.Chain.DepthMultiplier} (第{_battle.Chain.PlayerHandCount + 1}手)";
+            _callCardCount.Text = $"📞 叫牌剩余: {_remainingCallCards}";
+        if (_chainDepth != null)
+            _chainDepth.Text = $"⛓️ 接龙深度: ×{_chainDepthMultiplier} (第{_chainPlayerHandCount + 1}手)";
     }
 
     private void UpdateRiverDisplay()
     {
-        if (_battle == null || _riverLabel == null) return;
-        var entries = _battle.River.Entries;
-        if (entries.Count == 0) { _riverLabel.Text = "[牌河]"; return; }
-        _riverLabel.Text = string.Join("  →  ",
-            entries.Select(e => $"[{(e.Agent.IsPlayer ? "你" : "敌")}] {e.Pattern}"));
+        if (_riverLabel != null)
+            _riverLabel.Text = _riverText;
     }
 
     private void UpdateEnemyHandDisplay()
     {
-        if (_battle == null || _enemyHandLabel == null) return;
-        var enemy = _battle.Agents.FirstOrDefault(a => a.IsEnemy);
-        if (enemy == null) { _enemyHandLabel.Text = "[敌方手牌]"; return; }
-        _enemyHandLabel.Text = $"[敌方手牌] {string.Join(" ", enemy.Hands[0].Cards.Select(c => c))} (共{enemy.Hands[0].Count}张)";
+        if (_enemyHandLabel != null)
+            _enemyHandLabel.Text = _enemyHandText;
     }
 
     private void EnableButtons(bool enabled)

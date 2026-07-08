@@ -1,33 +1,52 @@
-using Godot;
-using GuandanKitty.Core;
 using System;
 using System.Collections.Generic;
+using GuandanKitty.Core;
 
 namespace GuandanKitty;
 
 /// <summary>
-/// 战斗状态机 —— 只负责状态流转，不包含游戏逻辑。
-/// 所有逻辑在 Battle 中实现，状态只做回调分发。
+/// 战斗状态机 —— 纯 C#，只负责状态流转和回调分发。
+/// 持有 TurnFSM 子状态机，不含游戏逻辑。
 /// </summary>
-public partial class BattleFSM : Node
+public class BattleFSM
 {
-    /// <summary>持有 Battle 引用</summary>
-    public Battle Battle { get; private set; } = null!;
-
     /// <summary>当前状态</summary>
     public BattleState? CurrentState { get; private set; }
 
-    private readonly Dictionary<Type, BattleState> _states = new();
+    /// <summary>Turn 子状态机（仅在 AgentTurnState 期间活跃）</summary>
+    internal TurnFSM TurnFSM { get; } = new();
 
-    public override void _Ready()
+    private readonly Dictionary<Type, BattleState> _states = new();
+    private readonly Battle _battle;
+
+    public BattleFSM(Battle battle)
     {
-        Battle = GetParent<Battle>();
+        _battle = battle;
+
+        // 注册主状态
+        AddState(new BattleStartState());
+        AddState(new RoundStartState());
+        AddState(new AgentTurnState());
+        AddState(new RoundSettlementState());
+        AddState(new RoundEndState());
+        AddState(new BattleEndState());
+
+        // 订阅 TurnFSM 事件，转发到 Battle
+        TurnFSM.JudgeRequested += () => _battle.OnTurnJudge();
+        TurnFSM.ActRequested += () => _battle.OnTurnAct();
+        TurnFSM.ActUpdateRequested += (delta) => _battle.OnTurnActUpdate(delta);
+        TurnFSM.PlayerPlayRequested += (cards) => _battle.OnTurnPlayerPlay(cards);
+        TurnFSM.PlayerPassRequested += () => _battle.OnTurnPlayerPass();
+        TurnFSM.PlayerCallRequested += () => _battle.OnTurnPlayerCall();
+        TurnFSM.ResolveRequested += () => _battle.OnTurnResolve();
+        TurnFSM.AdvanceRequested += () => _battle.OnTurnAdvance();
+        TurnFSM.TurnComplete += () => TransitionTo<RoundSettlementState>();
     }
 
-    /// <summary>注册一个状态</summary>
+    /// <summary>注册一个 BattleState</summary>
     public void AddState(BattleState state)
     {
-        state.Initialize(this, Battle);
+        state.Initialize(this, _battle);
         _states[state.GetType()] = state;
     }
 
@@ -36,13 +55,25 @@ public partial class BattleFSM : Node
     {
         CurrentState?.OnExit();
         CurrentState = _states[typeof(T)];
-        GD.Print($"[BattleFSM] → {typeof(T).Name}");
         CurrentState.OnEnter();
     }
 
-    public override void _Process(double delta)
+    /// <summary>每帧更新，由 Battle.Update() 驱动</summary>
+    public void Update(float delta)
     {
-        CurrentState?.Update((float)delta);
+        CurrentState?.Update(delta);
+    }
+
+    /// <summary>供 Battle 调度 TurnFSM 子状态机</summary>
+    public void TurnTransitionTo<T>() where T : TurnState
+    {
+        TurnFSM.TransitionTo<T>();
+    }
+
+    /// <summary>供 Battle 触发 TurnFSM 的 TurnComplete 事件</summary>
+    public void RaiseTurnComplete()
+    {
+        TurnFSM.RaiseTurnComplete();
     }
 }
 
@@ -51,7 +82,7 @@ public partial class BattleFSM : Node
 // ═════════════════════════════════════════════════
 
 /// <summary>
-/// 状态基类。所有状态继承此类，重写对应回调方法。
+/// 战斗状态基类。所有状态继承此类，重写对应回调方法。
 /// 禁止包含游戏逻辑，只做回调分发到 Battle。
 /// </summary>
 public abstract class BattleState
@@ -78,7 +109,7 @@ public abstract class BattleState
     /// <summary>每帧更新</summary>
     public virtual void Update(float delta) { }
 
-    /// <summary>玩家出牌回调（仅 PlayerTurn 时有效）</summary>
+    /// <summary>玩家出牌回调（仅 AgentTurnState 有效）</summary>
     public virtual string? OnPlayerPlay(List<Card> cards)
     {
         return "现在不是你的回合";
@@ -101,8 +132,7 @@ public abstract class BattleState
 //  状态实现 —— 每个状态只做回调分发，无游戏逻辑
 // ═════════════════════════════════════════════════
 
-
-/// <summary>2. 战斗开始（布置 + 抽起始手牌）</summary>
+/// <summary>战斗开始（布置 + 抽起始手牌）</summary>
 class BattleStartState : BattleState
 {
     public override void OnEnter()
@@ -111,7 +141,7 @@ class BattleStartState : BattleState
     }
 }
 
-/// <summary>3. 回合开始</summary>
+/// <summary>回合开始</summary>
 class RoundStartState : BattleState
 {
     public override void OnEnter()
@@ -121,38 +151,37 @@ class RoundStartState : BattleState
 }
 
 /// <summary>
-/// 4. Agent 轮次
-/// 统一处理玩家、敌人、友方的出牌轮次。
+/// Agent 轮次 —— 启动 TurnFSM 子状态机，委托 Agent 的出牌轮次。
 /// </summary>
 class AgentTurnState : BattleState
 {
     public override void OnEnter()
     {
-        Battle.OnAgentTurnStart();
+        FSM.TurnFSM.Start();
     }
 
     public override void Update(float delta)
     {
-        Battle.OnAgentTurnUpdate(delta);
+        FSM.TurnFSM.Update(delta);
     }
 
     public override string? OnPlayerPlay(List<Card> cards)
     {
-        return Battle.OnPlayerPlayCards(cards);
+        return FSM.TurnFSM.HandlePlayerPlay(cards);
     }
 
     public override string? OnPlayerPass()
     {
-        return Battle.OnPlayerPassTurn();
+        return FSM.TurnFSM.HandlePlayerPass();
     }
 
     public override string? OnPlayerCallCards()
     {
-        return Battle.OnPlayerCall();
+        return FSM.TurnFSM.HandlePlayerCall();
     }
 }
 
-/// <summary>4. 回合结算</summary>
+/// <summary>回合结算</summary>
 class RoundSettlementState : BattleState
 {
     public override void OnEnter()
@@ -161,7 +190,7 @@ class RoundSettlementState : BattleState
     }
 }
 
-/// <summary>5. 回合结束</summary>
+/// <summary>回合结束</summary>
 class RoundEndState : BattleState
 {
     public override void OnEnter()
@@ -175,7 +204,7 @@ class RoundEndState : BattleState
     }
 }
 
-/// <summary>6. 战斗结束</summary>
+/// <summary>战斗结束</summary>
 class BattleEndState : BattleState
 {
     public override void OnEnter()
