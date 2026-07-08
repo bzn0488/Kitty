@@ -1,121 +1,38 @@
-using GuandanKitty;
+using System.Collections.Generic;
 
 namespace GuandanKitty.Core;
 
 /// <summary>
-/// Agent 类型
+/// 参战方抽象基类。PlayerAgent 和 EnemyAgent 的公共父类。
+/// 持有 Battle 引用，支持多手牌。
 /// </summary>
-public enum AgentType { Player, Enemy }
-
-/// <summary>
-/// 参战方——统一抽象。支持多手牌、怪物挂载。
-/// </summary>
-public class Agent
+public abstract class Agent
 {
+    /// <summary>标识符</summary>
     public string Id { get; set; } = "";
-    public AgentType Type { get; set; }
+
+    /// <summary>手牌区列表（支持多手牌）</summary>
     public List<HandZone> Hands { get; } = new();
-    public StandardDeck? Deck { get; set; }
 
-    // 仅 Player
-    public int MaxCallCards { get; set; } = 3;
-    public int RemainingCallCards { get; set; } = 3;
-    public int CardsPerCall { get; set; } = 6;
+    /// <summary>所属 Battle</summary>
+    public Battle Battle { get; }
 
-    // 仅 Enemy
-    public List<Monster> Monsters { get; } = new();
-
-    // 回合状态
+    /// <summary>本回合是否已 Pass</summary>
     public bool HasPassed { get; set; }
+
+    /// <summary>本回合是否仍在活跃</summary>
     public bool IsActive => !HasPassed;
 
-    // 便捷属性
-    public bool IsPlayer => Type == AgentType.Player;
-    public bool IsEnemy => Type == AgentType.Enemy;
-    public bool CanCallCards => IsPlayer && RemainingCallCards > 0;
-    public bool IsDefeated =>
-        (Deck?.IsEmpty ?? true) && Hands.All(h => h.IsEmpty);
-
-    // ═══════════════════════════════════════════
-    //  工厂方法
-    // ═══════════════════════════════════════════
+    /// <summary>是否已战败</summary>
+    public abstract bool IsDefeated { get; }
 
     /// <summary>
-    /// 从外线 Player 衍生一个玩家 Agent（内线用，深拷贝牌组）。
+    /// 创建 Agent 实例。
     /// </summary>
-    public static Agent SpawnAgentFromPlayer(Player player, string id = "玩家")
+    protected Agent(Battle battle, string id)
     {
-        var agent = new Agent
-        {
-            Id = id,
-            Type = AgentType.Player,
-            Deck = player.Deck.Clone(),
-        };
-        agent.Hands.Add(new HandZone());
-        return agent;
-    }
-
-    /// <summary>
-    /// 创建一个敌方 Agent，挂载指定怪物列表。
-    /// </summary>
-    public static Agent SpawnAgentFromEnemy(string id, List<Monster> monsters)
-    {
-        var agent = new Agent
-        {
-            Id = id,
-            Type = AgentType.Enemy,
-        };
-        agent.Hands.Add(new HandZone());
-        agent.Monsters.AddRange(monsters);
-        return agent;
+        Battle = battle;
+        Id = id;
     }
 }
 
-/// <summary>
-/// 怪物数据定义
-/// </summary>
-public class Monster
-{
-    public string Id { get; set; } = "";
-    public string Name { get; set; } = "";
-    public int Level { get; set; } = 1;
-
-    // HP：baseHP × 1.1^(level-1)，_currentHP 跟踪战斗中变化
-    public int BaseHP { get; set; }
-    private int _currentHP = -1; // -1 表示未初始化
-    
-    public int CurrentHP
-    {
-        get
-        {
-            if (_currentHP < 0)
-                _currentHP = (int)(BaseHP * Math.Pow(1.1, Level - 1));
-            return _currentHP;
-        }
-    }
-    
-    public int MaxHP => (int)(BaseHP * Math.Pow(1.1, Level - 1));
-
-    public void AdjustHP(int delta)
-    {
-        if (_currentHP < 0) _ = CurrentHP; // 初始化
-        _currentHP = Math.Clamp(_currentHP + delta, 0, MaxHP);
-    }
-
-    // 牌池（骰子）
-    public List<Card> CardPool { get; set; } = new();
-    public int DrawsPerRound { get; set; } = 1;
-
-    // 战败效果
-    public DefeatEffect? DefeatEffect { get; set; }
-
-    /// <summary>
-    /// 从牌池中随机抽1张（复制品）
-    /// </summary>
-    public Card DrawFromPool(Random random)
-    {
-        if (CardPool.Count == 0)
-            throw new InvalidOperationException($"Monster {Name} has empty card pool");
-        return CardPool[random.Next(CardPool.Count)];
-    }
-}

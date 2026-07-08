@@ -1,26 +1,131 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace GuandanKitty.Core;
 
 /// <summary>
-/// 敌方 AI——简单规则：用最小合法牌型压制
+/// 敌方 Agent —— 挂载怪物列表，拥有 AI 决策、伤害承受、战败效果执行能力。
 /// </summary>
-public static class EnemyAI
+public class EnemyAgent : Agent
 {
-    private static readonly Random _random = new();
+    /// <summary>挂载的怪物列表</summary>
+    public List<Monster> Monsters { get; } = new();
+
+    /// <summary>怪物总血量</summary>
+    public int TotalHP => Monsters.Sum(m => m.CurrentHP);
+
+    /// <summary>敌人不会因牌堆耗尽而战败（由 Battle 判定 HP）</summary>
+    public override bool IsDefeated => false;
+
+    /// <summary>
+    /// 创建一个敌方 Agent，挂载指定怪物列表。
+    /// </summary>
+    public EnemyAgent(Battle battle, string id, List<Monster> monsters)
+        : base(battle, id)
+    {
+        Hands.Add(new HandZone());
+        Monsters.AddRange(monsters);
+    }
+
+    // ═══════════════════════════════════════════
+    //  抽牌
+    // ═══════════════════════════════════════════
+
+    /// <summary>
+    /// 战斗开始：从所有怪物牌池各抽 3 张初始手牌。
+    /// </summary>
+    public void DrawInitialHand(Random rng)
+    {
+        foreach (var monster in Monsters)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Hands[0].Add(monster.DrawFromPool(rng));
+            }
+        }
+    }
+
+    /// <summary>
+    /// 回合结束：从所有怪物牌池按各自的 DrawsPerRound 抽牌。
+    /// </summary>
+    public void DrawGrowthCards(Random rng)
+    {
+        foreach (var monster in Monsters)
+        {
+            for (int i = 0; i < monster.DrawsPerRound; i++)
+            {
+                Hands[0].Add(monster.DrawFromPool(rng));
+            }
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    //  伤害
+    // ═══════════════════════════════════════════
+
+    /// <summary>
+    /// 承受伤害，从第一个怪物开始扣血。
+    /// </summary>
+    public void ApplyDamage(int damage)
+    {
+        int remaining = damage;
+        foreach (var monster in Monsters)
+        {
+            if (remaining <= 0) break;
+            int deducted = Math.Min(remaining, monster.CurrentHP);
+            remaining -= deducted;
+            monster.AdjustHP(-deducted);
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    //  战败效果
+    // ═══════════════════════════════════════════
+
+    /// <summary>
+    /// 执行所有怪物的战败效果：从玩家手牌移出牌 → 永久删除 → 补抽等量。
+    /// </summary>
+    public void ExecuteDefeatEffects(PlayerAgent player)
+    {
+        int totalRemoved = 0;
+
+        foreach (var monster in Monsters)
+        {
+            if (monster.DefeatEffect == null) continue;
+
+            var toRemove = monster.DefeatEffect.SelectCardsToRemove(player.Hands[0]);
+            if (toRemove.Count == 0) continue;
+
+            player.Hands[0].Remove(toRemove);
+            player.Deck.RemovePermanently(toRemove);
+            totalRemoved += toRemove.Count;
+        }
+
+        if (totalRemoved > 0)
+        {
+            var drawn = player.Deck.Draw(totalRemoved);
+            player.Hands[0].AddRange(drawn);
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    //  AI 决策（从 EnemyAI 迁入）
+    // ═══════════════════════════════════════════
 
     /// <summary>
     /// 在所有手牌区中寻找能压制 target 的牌型。
     /// 返回 (handIndex, pattern) 或 null（Pass）。
-    /// 策略：选 CompareValue 最小的合法牌型（若同 CompareValue 则选 CardCount 小的）。
+    /// 策略：选 CompareValue 最小的合法牌型。
     /// </summary>
-    public static (int handIndex, CardPattern pattern)? FindBestPlay(
-        List<HandZone> hands, CardPattern target)
+    public (int handIndex, CardPattern pattern)? FindBestPlay(CardPattern target)
     {
         CardPattern? bestPattern = null;
         int bestHandIdx = 0;
 
-        for (int h = 0; h < hands.Count; h++)
+        for (int h = 0; h < Hands.Count; h++)
         {
-            var candidates = FindAllValidPlays(hands[h], target);
+            var candidates = FindAllValidPlays(Hands[h], target);
             foreach (var p in candidates)
             {
                 if (bestPattern == null ||
@@ -38,21 +143,19 @@ public static class EnemyAI
     }
 
     /// <summary>
-    /// 在手牌中暴力搜索所有能压制 target 的合法牌型
+    /// 在手牌中暴力搜索所有能压制 target 的合法牌型。
     /// </summary>
-    private static List<CardPattern> FindAllValidPlays(HandZone hand, CardPattern target)
+    private List<CardPattern> FindAllValidPlays(HandZone hand, CardPattern target)
     {
         var results = new List<CardPattern>();
         var cards = hand.Cards;
 
         if (target.Type == PatternType.Bomb)
         {
-            // 目标已是炸弹 → 必须找更大的炸弹
             FindBombs(cards, target.CompareValue, results);
         }
         else
         {
-            // 同牌型搜索
             switch (target.Type)
             {
                 case PatternType.Single:
@@ -71,7 +174,6 @@ public static class EnemyAI
                     FindTractors(cards, target.CardCount / 2, target.CompareValue, results);
                     break;
             }
-            // 另外炸弹总是可以跨牌型压制
             FindBombs(cards, 0, results);
         }
 

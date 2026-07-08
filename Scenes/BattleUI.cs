@@ -29,7 +29,7 @@ public partial class BattleUI : Control
     //  私有字段
     // ═══════════════════════════════════════════
 
-    private Agent? _playerAgent;
+    private PlayerAgent? _playerAgent;
     private int _deckCount;
     private int _remainingCallCards;
     private int _chainDepthMultiplier;
@@ -70,7 +70,7 @@ public partial class BattleUI : Control
     /// <summary>
     /// 设置玩家 Agent 引用（由 Battle 在初始化时调用）。
     /// </summary>
-    public void SetPlayerAgent(Agent agent)
+    public void SetPlayerAgent(PlayerAgent agent)
     {
         _playerAgent = agent;
     }

@@ -28,12 +28,12 @@ public class Battle
     public ChainTracker Chain { get; } = new();
 
     /// <summary>玩家 Agent</summary>
-    public Agent? PlayerAgent => Agents.FirstOrDefault(a => a.IsPlayer);
+    public PlayerAgent? PlayerAgent => Agents.OfType<PlayerAgent>().FirstOrDefault();
 
     /// <summary>敌方总 HP</summary>
     public int TotalEnemyHP => Agents
-        .Where(a => a.IsEnemy)
-        .Sum(a => a.Monsters.Sum(m => m.CurrentHP));
+        .OfType<EnemyAgent>()
+        .Sum(a => a.TotalHP);
 
     /// <summary>玩家输入是否启用</summary>
     public bool IsPlayerInputEnabled { get; private set; }
@@ -48,16 +48,12 @@ public class Battle
     private readonly StandardDeck _playerDeck;
     private readonly BattleUI _ui;
     private BattleFSM _fsm = null!;
-    private int _lastPlayerPlayDamage;
+    private int _lastPlayDamage;
     private float _roundEndDelay;
 
     // 敌人 AI 相关
     private float _turnEnemyTimer;
     private bool _turnEnemyActed;
-
-    // 初始抽牌序列
-    private int _drawCardsTotal;
-    private int _drawCardsCurrent;
 
     // ═══════════════════════════════════════════
     //  构造与生命周期
@@ -140,11 +136,13 @@ public class Battle
     //  FSM 回调 —— BattleStart
     // ═══════════════════════════════════════════
 
-    /// <summary>战斗开始：布置敌人初始手牌、玩家逐张摸起始牌</summary>
+    /// <summary>战斗开始：布置敌人初始手牌、玩家起始手牌</summary>
     internal void OnBattleStart()
     {
         DrawEnemyInitialHands();
         DrawStartHand();
+        NotifyHandUpdated();
+        _fsm.TransitionTo<RoundStartState>();
     }
 
     // ═══════════════════════════════════════════
@@ -170,7 +168,7 @@ public class Battle
     {
         var winner = DetermineRoundWinner();
 
-        if (winner.IsPlayer)
+        if (winner is PlayerAgent)
         {
             HandlePlayerWin();
         }
@@ -231,7 +229,7 @@ public class Battle
         if (ActiveAgents.Count == 1)
         {
             var sole = ActiveAgents[0];
-            if (sole.IsPlayer)
+            if (sole is PlayerAgent)
             {
                 // 玩家是唯一活跃者 → 允许自压
                 _fsm.TurnTransitionTo<TurnActState>();
@@ -272,7 +270,7 @@ public class Battle
             return;
         }
 
-        if (agent.IsPlayer)
+        if (agent is PlayerAgent)
         {
             EnablePlayerInput(true);
             NotifyStatus("请出牌或跳过");
@@ -294,7 +292,7 @@ public class Battle
         if (IsRoundOver) return;
 
         var agent = ActiveAgents.FirstOrDefault();
-        if (agent == null || agent.IsPlayer || _turnEnemyActed) return;
+        if (agent == null || agent is PlayerAgent || _turnEnemyActed) return;
 
         _turnEnemyTimer -= delta;
         if (_turnEnemyTimer > 0) return;
@@ -311,7 +309,9 @@ public class Battle
         }
         else
         {
-            var result = EnemyAI.FindBestPlay(agent.Hands, Chain.LastPlayed);
+            var enemy = agent as EnemyAgent;
+            if (enemy == null) return;
+            var result = enemy.FindBestPlay(Chain.LastPlayed);
             if (result != null)
             {
                 var (handIdx, pattern) = result.Value;
@@ -371,7 +371,7 @@ public class Battle
 
         River.Add(pattern, player);
         Chain.RecordPlay(pattern, player);
-        _lastPlayerPlayDamage = damage;
+        _lastPlayDamage = damage;
 
         NotifyAgentPlayed(player.Id, pattern.ToString(), pattern.CardCount);
         NotifyDamage(damage, TotalEnemyHP);
@@ -400,9 +400,9 @@ public class Battle
         Chain.RecordPass(player);
         NotifyAgentPassed(player.Id);
 
-        if (Chain.LastPlayedBy?.IsPlayer == true)
+        if (Chain.LastPlayedBy is PlayerAgent)
         {
-            ApplyWinningHandBonus();
+            ApplyWinningHandBonus(_lastPlayDamage);
         }
 
         IsRoundOver = true;
@@ -411,7 +411,7 @@ public class Battle
     }
 
     /// <summary>
-    /// Turn 玩家叫牌：从牌堆抽 6 张。
+    /// Turn 玩家叫牌：从牌堆抽牌。
     /// </summary>
     internal string? OnTurnPlayerCall()
     {
@@ -421,9 +421,8 @@ public class Battle
         if (player == null || !ActiveAgents.Contains(player)) return "现在不是你的回合";
         if (!player.CanCallCards) return "叫牌次数已用完";
 
-        var drawn = player.Deck!.Draw(player.CardsPerCall);
+        var drawn = player.CallCards();
         player.Hands[0].AddRange(drawn);
-        player.RemainingCallCards--;
         NotifyHandUpdated();
         return null;
     }
@@ -447,7 +446,7 @@ public class Battle
         {
             _fsm.TurnTransitionTo<TurnAdvanceState>();
         }
-        else if (wasClearHand && lastAgent?.IsPlayer == true)
+        else if (wasClearHand && lastAgent is PlayerAgent)
         {
             var player = PlayerAgent!;
             Chain.ClearHandPlayed = true;
@@ -492,19 +491,9 @@ public class Battle
     private void CreateAgents()
     {
         Agents.Clear();
-
-        var player = new Agent
-        {
-            Id = "玩家",
-            Type = AgentType.Player,
-            Deck = _playerDeck.Clone(),
-        };
-        player.Hands.Add(new HandZone());
-        Agents.Add(player);
-
-        var enemy = Agent.SpawnAgentFromEnemy("训练假人",
-            new List<Monster> { MonsterDatabase.CreateTestMonster() });
-        Agents.Add(enemy);
+        Agents.Add(new PlayerAgent(this, _playerDeck, "玩家"));
+        Agents.Add(new EnemyAgent(this, "训练假人",
+            new List<Monster> { MonsterDatabase.CreateTestMonster() }));
     }
 
     /// <summary>重置所有 Agent 的叫牌次数</summary>
@@ -525,29 +514,16 @@ public class Battle
     private void DrawEnemyInitialHands()
     {
         var rng = new Random();
-        foreach (var agent in Agents.Where(a => a.IsEnemy))
-        {
-            foreach (var monster in agent.Monsters)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    agent.Hands[0].Add(monster.DrawFromPool(rng));
-                }
-            }
-        }
+        foreach (var enemy in Agents.OfType<EnemyAgent>())
+            enemy.DrawInitialHand(rng);
     }
 
-    /// <summary>开始玩家逐张摸牌序列</summary>
+    /// <summary>玩家抽起始 8 张手牌</summary>
     private void DrawStartHand()
     {
-        //todo
-    }
-
-    /// <summary>判断玩家牌堆是否可抽牌</summary>
-    private bool CanPlayerDraw()
-    {
-        var player = PlayerAgent;
-        return player?.Deck != null && !player.Deck.IsEmpty;
+        var player = PlayerAgent!;
+        var drawn = player.DrawFromDeck(8);
+        player.Hands[0].AddRange(drawn);
     }
 
     // ═══════════════════════════════════════════
@@ -625,16 +601,9 @@ public class Battle
     /// <summary>执行所有怪物的战败效果</summary>
     private void ExecuteAllDefeatEffects()
     {
-        foreach (var enemy in Agents.Where(a => a.IsEnemy))
-        {
-            if (enemy.Monsters.Count > 0)
-            {
-                DefeatEffectExecutor.Execute(
-                    enemy.Monsters,
-                    PlayerAgent!.Hands[0],
-                    PlayerAgent.Deck!);
-            }
-        }
+        var player = PlayerAgent!;
+        foreach (var enemy in Agents.OfType<EnemyAgent>())
+            enemy.ExecuteDefeatEffects(player);
     }
 
     // ═══════════════════════════════════════════
@@ -653,28 +622,21 @@ public class Battle
     private void EnemyGrowthDraw()
     {
         var rng = new Random();
-        foreach (var enemy in Agents.Where(a => a.IsEnemy))
-        {
-            foreach (var monster in enemy.Monsters)
-            {
-                for (int i = 0; i < monster.DrawsPerRound; i++)
-                {
-                    enemy.Hands[0].Add(monster.DrawFromPool(rng));
-                }
-            }
-        }
+        foreach (var enemy in Agents.OfType<EnemyAgent>())
+            enemy.DrawGrowthCards(rng);
     }
 
     // ═══════════════════════════════════════════
     //  公共工具方法
     // ═══════════════════════════════════════════
 
-    /// <summary>对最后一手补乘 ×2 伤害（清空手牌不重复叠加）</summary>
-    public void ApplyWinningHandBonus()
+    /// <summary>对最后一手补乘 ×2 伤害（清空手牌不重复叠加）。
+    /// 取最后一手出牌的伤害值 ×1 补算。</summary>
+    public void ApplyWinningHandBonus(int lastPlayDamage)
     {
-        if (_lastPlayerPlayDamage > 0 && !Chain.ClearHandPlayed)
+        if (lastPlayDamage > 0 && !Chain.ClearHandPlayed)
         {
-            ApplyDamageToEnemies(_lastPlayerPlayDamage);
+            ApplyDamageToEnemies(lastPlayDamage);
         }
     }
 
@@ -682,8 +644,9 @@ public class Battle
     public void ApplyDamageToEnemies(int damage)
     {
         int remaining = damage;
-        foreach (var enemy in Agents.Where(a => a.IsEnemy))
+        foreach (var enemy in Agents.OfType<EnemyAgent>())
         {
+            if (remaining <= 0) break;
             foreach (var monster in enemy.Monsters)
             {
                 if (remaining <= 0) break;
@@ -691,7 +654,6 @@ public class Battle
                 remaining -= deducted;
                 monster.AdjustHP(-deducted);
             }
-            if (remaining <= 0) break;
         }
         _ui.OnEnemyHpChanged(TotalEnemyHP);
     }
@@ -749,10 +711,10 @@ public class Battle
         else
         {
             riverText = string.Join("  →  ",
-                entries.Select(e => $"[{(e.Agent.IsPlayer ? "你" : "敌")}] {e.Pattern}"));
+                entries.Select(e => $"[{(e.Agent is PlayerAgent ? "你" : "敌")}] {e.Pattern}"));
         }
 
-        var enemy = Agents.FirstOrDefault(a => a.IsEnemy);
+        var enemy = Agents.OfType<EnemyAgent>().FirstOrDefault();
         string enemyHandText;
         if (enemy == null)
         {

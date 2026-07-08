@@ -20,7 +20,7 @@ public class ChainTracker
     {
         LastPlayed = pattern;
         LastPlayedBy = agent;
-        if (agent.Type == AgentType.Player)
+        if (agent is PlayerAgent)
             PlayerHandCount++;
     }
 
