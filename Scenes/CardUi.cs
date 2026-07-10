@@ -4,33 +4,33 @@ using GuandanKitty.Core;
 namespace GuandanKitty;
 
 /// <summary>
-/// 单张卡牌的 UI 控件。支持选中状态、数据绑定、动态卡面纹理。
+/// 单张卡牌的 UI 控件。由 BattleUI 创建、设置数据、注册事件。
+/// 不含 _Ready，所有初始化由 SetCard 完成。
 /// </summary>
 public partial class CardUi : Control
 {
     private const string CardTexturePath = "res://Resources/Card/card{0}{1}.png";
 
-    // 卡牌数据
     private Card? _card;
-    public Card? Card => _card;
-
-    // 选中状态
-    private bool _isSelected;
-    public bool IsSelected => _isSelected;
-
-    // 子节点引用
     private TextureButton? _textureButton;
     private Label? _fallbackLabel;
+    private bool _isSelected;
 
-    // 选中状态变更信号
+    public Card? Card => _card;
+    public bool IsSelected => _isSelected;
+
     [Signal]
     public delegate void CardToggledEventHandler(CardUi cardUi, bool selected);
 
-    public override void _Ready()
+    /// <summary>
+    /// 绑定卡牌数据并初始化子控件。由 BattleUI 在 AddChild 之后调用。
+    /// </summary>
+    public void SetCard(Card card)
     {
+        _card = card;
+
         _textureButton = GetNode<TextureButton>("TextureButton");
 
-        // 备用文字标签（纹理加载失败时显示）
         _fallbackLabel = new Label();
         _fallbackLabel.HorizontalAlignment = HorizontalAlignment.Center;
         _fallbackLabel.VerticalAlignment = VerticalAlignment.Center;
@@ -40,16 +40,15 @@ public partial class CardUi : Control
         _textureButton.AddChild(_fallbackLabel);
 
         _textureButton.Pressed += OnPressed;
+
+        ApplyCardTexture(card);
     }
 
     /// <summary>
-    /// 绑定卡牌数据，动态加载对应纹理
+    /// 加载并应用卡面纹理，失败则显示文字。
     /// </summary>
-    public void SetCard(Card card)
+    private void ApplyCardTexture(Card card)
     {
-        _card = card;
-
-        // 加载卡面纹理
         var texture = LoadCardTexture(card);
         if (texture != null)
         {
@@ -58,7 +57,6 @@ public partial class CardUi : Control
         }
         else
         {
-            // 纹理加载失败 → 显示备用文字
             if (_fallbackLabel != null)
             {
                 _fallbackLabel.Text = $"{card.SuitSymbol}{card.RankSymbol}";
@@ -70,7 +68,27 @@ public partial class CardUi : Control
     }
 
     /// <summary>
-    /// 根据花色和牌面解析文件名，加载对应纹理
+    /// 设置选中状态。
+    /// </summary>
+    public void SetSelected(bool selected)
+    {
+        _isSelected = selected;
+        if (_textureButton != null)
+        {
+            _textureButton.Modulate = selected
+                ? new Color(1.0f, 0.9f, 0.3f)
+                : Colors.White;
+        }
+    }
+
+    private void OnPressed()
+    {
+        SetSelected(!_isSelected);
+        EmitSignal(SignalName.CardToggled, this, _isSelected);
+    }
+
+    /// <summary>
+    /// 根据花色和牌面加载对应纹理。
     /// </summary>
     private static Texture2D? LoadCardTexture(Card card)
     {
@@ -98,24 +116,5 @@ public partial class CardUi : Control
         var path = string.Format(CardTexturePath, suitName, rankName);
         return ResourceLoader.Load<Texture2D>(path);
     }
-
-    /// <summary>
-    /// 设置选中状态
-    /// </summary>
-    public void SetSelected(bool selected)
-    {
-        _isSelected = selected;
-        if (_textureButton != null)
-        {
-            _textureButton.Modulate = selected
-                ? new Color(1.0f, 0.9f, 0.3f)  // 黄色高亮
-                : Colors.White;
-        }
-    }
-
-    private void OnPressed()
-    {
-        SetSelected(!_isSelected);
-        EmitSignal(SignalName.CardToggled, this, _isSelected);
-    }
 }
+

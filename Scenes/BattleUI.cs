@@ -45,7 +45,7 @@ public partial class BattleUI : Control
     private Label? _enemyHandLabel;
     private Label? _riverLabel;
 
-    private HBoxContainer? _playerHand;
+    [Export] private HBoxContainer? _playerHand;
     private Button? _playBtn;
     private Button? _callBtn;
     private Button? _passBtn;
@@ -57,14 +57,8 @@ public partial class BattleUI : Control
     public override void _Ready()
     {
         _cardUiScene = ResourceLoader.Load<PackedScene>("res://Scenes/CardUI.tscn");
-
-        // 创建手牌容器
-        _playerHand = new HBoxContainer();
-        _playerHand.SetPosition(new Vector2(20, 560));
-        AddChild(_playerHand);
-
         BuildUI();
-        Hide();
+        Run.Instance.StartBattle(this);
     }
 
     /// <summary>

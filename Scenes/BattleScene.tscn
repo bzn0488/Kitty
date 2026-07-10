@@ -1,11 +1,10 @@
 [gd_scene format=3 uid="uid://b8scwbt2pxaq7"]
 
-[ext_resource type="Script" uid="uid://dq26v5aelbqw2" path="res://Scenes/BattleUI.cs" id="1_battle"]
-[ext_resource type="Texture2D" uid="uid://cfuvdo8n34iu8" path="res://Resources/Table.png" id="2_hip74"]
+[ext_resource type="Script" uid="uid://dq26v5aelbqw2" path="res://Scenes/BattleUI.cs" id="1_ui"]
+[ext_resource type="Texture2D" uid="uid://cfuvdo8n34iu8" path="res://Resources/Table.png" id="2_bg"]
 [ext_resource type="PackedScene" uid="uid://bcf6xt6y4ienp" path="res://Scenes/CardUI.tscn" id="3_b2eky"]
-[ext_resource type="Script" uid="" path="res://Core/Battle/Battle.cs" id="4_battle"]
 
-[node name="BattleScene" type="Control" unique_id=282815023]
+[node name="BattleScene" type="Control" unique_id=224493377 node_paths=PackedStringArray("_playerHand")]
 custom_minimum_size = Vector2(1920, 1080)
 layout_mode = 3
 anchors_preset = 15
@@ -13,9 +12,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_battle")
+script = ExtResource("1_ui")
+_playerHand = NodePath("PlayerHand")
 
-[node name="TableBackGround" type="TextureRect" parent="." unique_id=1987132959]
+[node name="TableBackGround" type="TextureRect" parent="." unique_id=857183747]
 custom_minimum_size = Vector2(1920, 1080)
 layout_mode = 1
 anchors_preset = 15
@@ -23,30 +23,27 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_hip74")
+texture = ExtResource("2_bg")
 
-[node name="Battle" type="Node" parent="."]
-script = ExtResource("4_battle")
-
-[node name="PlayerHand" type="HBoxContainer" parent="." unique_id=110681701]
+[node name="PlayerHand" type="HBoxContainer" parent="." unique_id=854639308]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -525.0
-offset_top = -206.0
-offset_right = 525.0
-offset_bottom = -16.0
+offset_left = -541.0
+offset_top = -215.0
+offset_right = 541.0
+offset_bottom = -25.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = -95
 alignment = 1
 metadata/_edit_group_ = true
 
-[node name="Card" parent="PlayerHand" unique_id=1916286882 instance=ExtResource("3_b2eky")]
+[node name="Card2" parent="PlayerHand" unique_id=2145254723 instance=ExtResource("3_b2eky")]
 layout_mode = 2
 
-[node name="Card2" parent="PlayerHand" unique_id=2145254723 instance=ExtResource("3_b2eky")]
+[node name="Card" parent="PlayerHand" unique_id=1364908675 instance=ExtResource("3_b2eky")]
 layout_mode = 2

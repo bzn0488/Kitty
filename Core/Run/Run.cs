@@ -1,16 +1,15 @@
-using Godot;
 using GuandanKitty.Core;
 
 namespace GuandanKitty;
 
 /// <summary>
-/// Run 管理器 —— 外线系统的根实体，Battle 的上级。
-/// 全局单例（Autoload），管理 Player 数据、创建/驱动/销毁 Battle。
+/// Run 管理器 —— 外线系统的根实体，纯 C# 类，不继承 Node。
+/// 管理 Player 数据，创建/驱动/销毁 Battle。
 /// </summary>
-public partial class Run : Node
+public class Run
 {
-    /// <summary>静态实例引用（Autoload 自动赋值）</summary>
-    public static Run Instance { get; private set; } = null!;
+    /// <summary>全局单例</summary>
+    public static Run Instance { get; } = new Run();
 
     /// <summary>玩家数据（贯穿一次 Run）</summary>
     public Player PlayerData { get; private set; } = null!;
@@ -18,13 +17,7 @@ public partial class Run : Node
     /// <summary>当前战斗实例</summary>
     public Battle? CurrentBattle { get; private set; }
 
-    /// <summary>BattleUI 引用（由主场景在启动战斗前设置）</summary>
-    private BattleUI? _battleUI;
-
-    public override void _Ready()
-    {
-        Instance = this;
-    }
+    private Run() { }
 
     /// <summary>
     /// 初始化 Run：创建玩家、重置 Run 级数据。
@@ -36,30 +29,22 @@ public partial class Run : Node
     }
 
     /// <summary>
-    /// 设置 BattleUI 引用（由主场景在 _Ready 时调用）。
+    /// 启动 Battle：创建 Battle 实例，初始化 FSM 和 UI。
     /// </summary>
-    public void SetBattleUI(BattleUI ui)
+    public void StartBattle(BattleUI ui)
     {
-        _battleUI = ui;
-    }
+        if (PlayerData == null) return;
 
-    /// <summary>
-    /// 开始战斗：创建 Battle、初始化、开始驱动。
-    /// </summary>
-    public void StartBattle()
-    {
-        if (PlayerData == null || _battleUI == null) return;
-
-        CurrentBattle = new Battle(PlayerData.Deck, _battleUI);
+        CurrentBattle = new Battle(PlayerData.Deck, ui);
         CurrentBattle.Initialize();
     }
 
     /// <summary>
-    /// 每帧驱动当前 Battle。
+    /// 每帧更新，由场景根节点的 _Process 驱动。
     /// </summary>
-    public override void _Process(double delta)
+    public void Update(float delta)
     {
-        CurrentBattle?.Update((float)delta);
+        CurrentBattle?.Update(delta);
     }
 
     /// <summary>
@@ -71,3 +56,4 @@ public partial class Run : Node
         CurrentBattle = null;
     }
 }
+
