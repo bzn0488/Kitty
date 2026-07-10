@@ -251,11 +251,22 @@ public class Battle
     // ═══════════════════════════════════════════
 
     /// <summary>
-    /// Judge：当前轮是否继续。
+    /// Judge：只剩一个活跃者则结束回合并结算，否则继续。
     /// </summary>
     public bool JudgeTurn()
     {
         if (IsRoundOver) return false;
+
+        if (ActiveAgents.Count == 1)
+        {
+            if (ActiveAgents[0] is PlayerAgent && Chain.LastPlayedBy is PlayerAgent)
+            {
+                ApplyWinningHandBonus(_lastPlayDamage);
+            }
+            IsRoundOver = true;
+            return false;
+        }
+
         return ActiveAgents.Count > 0;
     }
 
@@ -362,29 +373,17 @@ public class Battle
     }
 
     /// <summary>
-    /// 推进到下一 Agent，若只剩一个则结束回合。
+    /// 推进到下一 Agent，将队首移到队尾。
     /// </summary>
     public void AdvanceToNext()
     {
         if (IsRoundOver) return;
 
-        // 当前 Agent 移到队尾
         if (ActiveAgents.Count > 0)
         {
             var first = ActiveAgents[0];
             ActiveAgents.RemoveAt(0);
             ActiveAgents.Add(first);
-        }
-
-        // 只剩玩家一个 → 回合结束
-        if (ActiveAgents.Count == 1 && ActiveAgents[0] is PlayerAgent)
-        {
-            if (Chain.LastPlayedBy is PlayerAgent)
-            {
-                ApplyWinningHandBonus(_lastPlayDamage);
-            }
-            IsRoundOver = true;
-            _fsm.TurnFSM.CompleteTurn();
         }
     }
 

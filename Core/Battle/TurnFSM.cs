@@ -132,6 +132,6 @@ class TurnEndState : TurnState
     {
         Battle.Current.OnTurnEnd();
         Battle.Current.AdvanceToNext();
-        FSM.TransitionTo<TurnJudgeState>();
+        FSM.TransitionTo<TurnJudgeState>(); 
     }
 }
