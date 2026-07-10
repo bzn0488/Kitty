@@ -26,16 +26,19 @@ public class Run
     {
         PlayerData = new Player();
         PlayerData.Initialize();
+      
+        // Run 创建 Battle 并初始化
+        // 暂时放在run的初始化里，之后会添加相应调用入口
+        StartBattle();               
     }
 
     /// <summary>
-    /// 启动 Battle：创建 Battle 实例，初始化 FSM 和 UI。
+    /// 启动 Battle：创建 Battle 实例并初始化（含加载 UI、创建 FSM）。
     /// </summary>
-    public void StartBattle(BattleUI ui)
+    public void StartBattle()
     {
         if (PlayerData == null) return;
-
-        CurrentBattle = new Battle(PlayerData.Deck, ui);
+        CurrentBattle = new Battle(PlayerData.Deck);
         CurrentBattle.Initialize();
     }
 

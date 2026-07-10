@@ -15,7 +15,6 @@ public partial class MainScene : Control
     private void OnStartPressed()
     {
         Run.Instance.Initialize();
-        UIRoot.Instance.LoadBattleScene();
     }
 }
 

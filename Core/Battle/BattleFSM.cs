@@ -23,7 +23,6 @@ public class BattleFSM
     {
         _battle = battle;
 
-        // 注册主状态
         AddState(new BattleStartState());
         AddState(new RoundStartState());
         AddState(new AgentTurnState());
@@ -31,15 +30,7 @@ public class BattleFSM
         AddState(new RoundEndState());
         AddState(new BattleEndState());
 
-        // 订阅 TurnFSM 事件，转发到 Battle
-        TurnFSM.JudgeRequested += () => _battle.OnTurnJudge();
-        TurnFSM.ActRequested += () => _battle.OnTurnAct();
-        TurnFSM.ActUpdateRequested += (delta) => _battle.OnTurnActUpdate(delta);
-        TurnFSM.PlayerPlayRequested += (cards) => _battle.OnTurnPlayerPlay(cards);
-        TurnFSM.PlayerPassRequested += () => _battle.OnTurnPlayerPass();
-        TurnFSM.PlayerCallRequested += () => _battle.OnTurnPlayerCall();
-        TurnFSM.ResolveRequested += () => _battle.OnTurnResolve();
-        TurnFSM.AdvanceRequested += () => _battle.OnTurnAdvance();
+        // 唯一事件：TurnFSM 完成一整轮
         TurnFSM.TurnComplete += () => TransitionTo<RoundSettlementState>();
     }
 
@@ -62,18 +53,6 @@ public class BattleFSM
     public void Update(float delta)
     {
         CurrentState?.Update(delta);
-    }
-
-    /// <summary>供 Battle 调度 TurnFSM 子状态机</summary>
-    public void TurnTransitionTo<T>() where T : TurnState
-    {
-        TurnFSM.TransitionTo<T>();
-    }
-
-    /// <summary>供 Battle 触发 TurnFSM 的 TurnComplete 事件</summary>
-    public void RaiseTurnComplete()
-    {
-        TurnFSM.RaiseTurnComplete();
     }
 }
 
@@ -151,7 +130,7 @@ class RoundStartState : BattleState
 }
 
 /// <summary>
-/// Agent 轮次 —— 启动 TurnFSM 子状态机，委托 Agent 的出牌轮次。
+/// Agent 轮次 —— 启动 TurnFSM 子状态机。
 /// </summary>
 class AgentTurnState : BattleState
 {
@@ -163,21 +142,6 @@ class AgentTurnState : BattleState
     public override void Update(float delta)
     {
         FSM.TurnFSM.Update(delta);
-    }
-
-    public override string? OnPlayerPlay(List<Card> cards)
-    {
-        return FSM.TurnFSM.HandlePlayerPlay(cards);
-    }
-
-    public override string? OnPlayerPass()
-    {
-        return FSM.TurnFSM.HandlePlayerPass();
-    }
-
-    public override string? OnPlayerCallCards()
-    {
-        return FSM.TurnFSM.HandlePlayerCall();
     }
 }
 

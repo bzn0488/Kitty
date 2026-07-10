@@ -61,7 +61,6 @@ public partial class BattleUI : Control
         _playerHand?.GetChildren().ToList().ForEach(c => c.QueueFree());
         _enemyHand?.GetChildren().ToList().ForEach(c => c.QueueFree());
         BuildUI();
-        Run.Instance.StartBattle(this);
     }
 
     /// <summary>
@@ -159,6 +158,20 @@ public partial class BattleUI : Control
         var cards = new List<Card>(_selectedCards);
         if (cards.Count == 0) return;
         PlayRequested?.Invoke(cards);
+        ClearSelection();
+    }
+
+    /// <summary>
+    /// 清除所有卡牌选中状态。
+    /// </summary>
+    public void ClearSelection()
+    {
+        foreach (var child in _playerHand?.GetChildren() ?? Enumerable.Empty<Node>())
+        {
+            if (child is CardUi cardUi)
+                cardUi.SetSelected(false);
+        }
+        _selectedCards.Clear();
     }
 
     private void OnCallPressed()

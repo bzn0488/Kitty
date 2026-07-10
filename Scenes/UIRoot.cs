@@ -28,17 +28,15 @@ public partial class UIRoot : Control
     }
 
     /// <summary>
-    /// 加载战斗场景，并触发 Run 创建 Battle。
+    /// 加载战斗场景，返回 BattleUI 引用。
     /// </summary>
-    public void LoadBattleScene()
+    public BattleUI LoadBattleScene()
     {
         ClearChildren();
         var scene = ResourceLoader.Load<PackedScene>("res://Scenes/BattleScene.tscn");
         var battleUI = scene.Instantiate<BattleUI>();
         AddChild(battleUI);
-
-        // Run 创建 Battle 并初始化
-        Run.Instance.StartBattle(battleUI);
+        return battleUI;
     }
 
     /// <summary>

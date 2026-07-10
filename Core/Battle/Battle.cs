@@ -41,12 +41,15 @@ public class Battle
     /// <summary>当前回合是否已结束（防止重复结算）</summary>
     public bool IsRoundOver { get; private set; }
 
+    /// <summary>当前战斗中 Agent（供 TurnFSM 状态访问）</summary>
+    public static Battle Current { get; private set; } = null!;
+
     // ═══════════════════════════════════════════
     //  私有字段
     // ═══════════════════════════════════════════
 
     private readonly StandardDeck _playerDeck;
-    private readonly BattleUI _ui;
+    private BattleUI _ui = null!;
     private BattleFSM _fsm = null!;
     private int _lastPlayDamage;
     private float _roundEndDelay;
@@ -62,20 +65,23 @@ public class Battle
     /// <summary>
     /// 创建 Battle 实例。需调用 Initialize() 后才开始运行。
     /// </summary>
-    public Battle(StandardDeck playerDeck, BattleUI ui)
+    public Battle(StandardDeck playerDeck)
     {
         _playerDeck = playerDeck;
-        _ui = ui;
     }
 
     /// <summary>
-    /// 初始化战斗：创建 Agent、注册 FSM、订阅 UI 事件、开始战斗。
+    /// 初始化战斗：加载 BattleUI、创建 Agent、注册 FSM、开始战斗。
     /// </summary>
     public void Initialize()
     {
+        Current = this;
+
+        // 加载 BattleUI
+        _ui = UIRoot.Instance.LoadBattleScene();
+
         CreateAgents();
 
-        // 设置 UI 数据引用
         _ui.SetPlayerAgent(PlayerAgent!);
         _ui.SetEnemyAgent(Agents.OfType<EnemyAgent>().First());
 
@@ -114,23 +120,46 @@ public class Battle
 
     private void OnPlayRequested(List<Card> cards)
     {
-        var err = _fsm.CurrentState?.OnPlayerPlay(cards);
+        var player = PlayerAgent;
+        if (player == null) return;
+
+        var err = player.TryPlayCards(cards);
         if (err != null)
+        {
             NotifyStatus(err);
+            return;
+        }
+
+        NotifyAgentPlayed(player.Id, Chain.LastPlayed?.ToString() ?? "", Chain.LastPlayed?.CardCount ?? 0);
+        NotifyHandUpdated();
+        NotifyRiverUpdated();
+        _fsm.TurnFSM.TransitionTo<TurnAfterPlayState>();
     }
 
     private void OnPassRequested()
     {
-        var err = _fsm.CurrentState?.OnPlayerPass();
-        if (err != null)
-            NotifyStatus(err);
+        var player = PlayerAgent;
+        if (player == null) return;
+
+        player.TryPass();
+        NotifyAgentPassed(player.Id);
+        _fsm.TurnFSM.TransitionTo<TurnEndState>();
     }
 
     private void OnCallRequested()
     {
-        var err = _fsm.CurrentState?.OnPlayerCallCards();
+        var player = PlayerAgent;
+        if (player == null) return;
+
+        var err = player.TryCallCards();
         if (err != null)
+        {
             NotifyStatus(err);
+            return;
+        }
+
+        NotifyHandUpdated();
+        _fsm.TurnFSM.TransitionTo<TurnEndState>();
     }
 
     // ═══════════════════════════════════════════
@@ -218,60 +247,27 @@ public class Battle
     }
 
     // ═══════════════════════════════════════════
-    //  Turn 回调 —— TurnJudge
+    //  Turn 方法
     // ═══════════════════════════════════════════
 
     /// <summary>
-    /// Turn Judge：检查 ActiveAgents，决定进 Act 还是结束回合。
-    /// 特例：玩家是唯一活跃者 → 允许自压（继续 Act）。
+    /// Judge：当前轮是否继续。
     /// </summary>
-    internal void OnTurnJudge()
+    public bool JudgeTurn()
     {
-        if (IsRoundOver) return;
-
-        if (ActiveAgents.Count == 1)
-        {
-            var sole = ActiveAgents[0];
-            if (sole is PlayerAgent)
-            {
-                // 玩家是唯一活跃者 → 允许自压
-                _fsm.TurnTransitionTo<TurnActState>();
-            }
-            else
-            {
-                // 敌人是唯一活跃者 → 回合结束
-                IsRoundOver = true;
-                _fsm.RaiseTurnComplete();
-            }
-        }
-        else if (ActiveAgents.Count > 1)
-        {
-            _fsm.TurnTransitionTo<TurnActState>();
-        }
-        else
-        {
-            IsRoundOver = true;
-            _fsm.RaiseTurnComplete();
-        }
+        if (IsRoundOver) return false;
+        return ActiveAgents.Count > 0;
     }
 
-    // ═══════════════════════════════════════════
-    //  Turn 回调 —— TurnAct
-    // ═══════════════════════════════════════════
-
     /// <summary>
-    /// Turn Act：根据当前活跃 Agent 类型开始行动。
+    /// Start：设置当前 Agent，玩家启输入，敌人启倒计时。
     /// </summary>
-    internal void OnTurnAct()
+    public void OnTurnStart()
     {
         if (IsRoundOver) return;
 
         var agent = ActiveAgents.FirstOrDefault();
-        if (agent == null)
-        {
-            _fsm.TurnTransitionTo<TurnAdvanceState>();
-            return;
-        }
+        if (agent == null) return;
 
         if (agent is PlayerAgent)
         {
@@ -288,9 +284,9 @@ public class Battle
     }
 
     /// <summary>
-    /// Turn Act Update：敌人 AI 倒计时，到时间后自动决策。
+    /// Start Update：敌人倒计时，到时间自动决策。
     /// </summary>
-    internal void OnTurnActUpdate(float delta)
+    public void OnTurnStartUpdate(float delta)
     {
         if (IsRoundOver) return;
 
@@ -301,182 +297,78 @@ public class Battle
         if (_turnEnemyTimer > 0) return;
         _turnEnemyActed = true;
 
-        if (Chain.LastPlayed == null)
+        if (agent is EnemyAgent enemy)
         {
-            // 敌人不能先手（玩家总是先手）→ 淘汰
-            ActiveAgents.Remove(agent);
-            Chain.RecordPass(agent);
-            NotifyAgentPassed(agent.Id);
-            _fsm.TurnFSM.LastActionWasPass = true;
-            _fsm.TurnFSM.LastActionPattern = null;
-        }
-        else
-        {
-            var enemy = agent as EnemyAgent;
-            if (enemy == null) return;
-            var result = enemy.FindBestPlay(Chain.LastPlayed);
-            if (result != null)
+            bool played = enemy.DecideAndPlay();
+            if (played)
             {
-                var pattern = result;
-                agent.Hand.Remove(pattern.Cards);
-                River.Add(pattern, agent);
-                Chain.RecordPlay(pattern, agent);
-                NotifyAgentPlayed(agent.Id, pattern.ToString(), pattern.CardCount);
+                NotifyAgentPlayed(agent.Id, Chain.LastPlayed?.ToString() ?? "", Chain.LastPlayed?.CardCount ?? 0);
                 NotifyRiverUpdated();
                 NotifyEnemyHandUpdated();
-                _fsm.TurnFSM.LastActionWasPass = false;
-                _fsm.TurnFSM.LastActionPattern = pattern;
+                _fsm.TurnFSM.TransitionTo<TurnAfterPlayState>();
             }
             else
             {
-                ActiveAgents.Remove(agent);
-                Chain.RecordPass(agent);
                 NotifyAgentPassed(agent.Id);
-                _fsm.TurnFSM.LastActionWasPass = true;
-                _fsm.TurnFSM.LastActionPattern = null;
+                _fsm.TurnFSM.TransitionTo<TurnEndState>();
             }
         }
-
-        _fsm.TurnTransitionTo<TurnResolveState>();
     }
 
     /// <summary>
-    /// Turn 玩家出牌：验证牌型、扣除手牌、即时伤害、记录牌河。
+    /// AfterPlay：结算一手牌的伤害和效果。
     /// </summary>
-    internal string? OnTurnPlayerPlay(List<Card> cards)
-    {
-        if (IsRoundOver) return "回合已结束";
-
-        var player = PlayerAgent;
-        if (player == null || !ActiveAgents.Contains(player)) return "现在不是你的回合";
-
-        var pattern = CardPatternDetector.Detect(cards);
-        if (pattern == null) return "不是合法牌型";
-
-        if (Chain.LastPlayed != null &&
-            !SuppressionJudge.CanSuppress(pattern, Chain.LastPlayed))
-        {
-            return "无法压制上一手牌";
-        }
-
-        player.Hand.Remove(cards);
-
-        bool isClearHand = player.Hand.IsEmpty;
-        int damage = DamageCalculator.Calculate(
-            pattern,
-            Chain.DepthMultiplier,
-            isWinningHand: false,
-            isClearHand: isClearHand);
-
-        if (damage > 0)
-        {
-            ApplyDamageToEnemies(damage);
-        }
-
-        River.Add(pattern, player);
-        Chain.RecordPlay(pattern, player);
-        _lastPlayDamage = damage;
-
-        NotifyAgentPlayed(player.Id, pattern.ToString(), pattern.CardCount);
-        NotifyDamage(damage, TotalEnemyHP);
-        NotifyHandUpdated();
-        NotifyRiverUpdated();
-
-        _fsm.TurnFSM.LastActionWasPass = false;
-        _fsm.TurnFSM.LastActionIsClearHand = isClearHand;
-        _fsm.TurnFSM.LastActionPattern = pattern;
-
-        _fsm.TurnTransitionTo<TurnResolveState>();
-        return null;
-    }
-
-    /// <summary>
-    /// Turn 玩家 Pass：从 ActiveAgents 移除，判断是否触发回合结束。
-    /// </summary>
-    internal string? OnTurnPlayerPass()
-    {
-        if (IsRoundOver) return "回合已结束";
-
-        var player = PlayerAgent;
-        if (player == null || !ActiveAgents.Contains(player)) return "现在不是你的回合";
-
-        ActiveAgents.Remove(player);
-        Chain.RecordPass(player);
-        NotifyAgentPassed(player.Id);
-
-        if (Chain.LastPlayedBy is PlayerAgent)
-        {
-            ApplyWinningHandBonus(_lastPlayDamage);
-        }
-
-        IsRoundOver = true;
-        _fsm.RaiseTurnComplete();
-        return null;
-    }
-
-    /// <summary>
-    /// Turn 玩家叫牌：从牌堆抽牌。
-    /// </summary>
-    internal string? OnTurnPlayerCall()
-    {
-        if (IsRoundOver) return "回合已结束";
-
-        var player = PlayerAgent;
-        if (player == null || !ActiveAgents.Contains(player)) return "现在不是你的回合";
-        if (!player.CanCallCards) return "叫牌次数已用完";
-
-        var drawn = player.CallCards();
-        player.Hand.AddRange(drawn);
-        NotifyHandUpdated();
-        return null;
-    }
-
-    // ═══════════════════════════════════════════
-    //  Turn 回调 —— TurnResolve
-    // ═══════════════════════════════════════════
-
-    /// <summary>
-    /// Turn Resolve：根据 Act 阶段的结果决定继续轮还是结束回合。
-    /// </summary>
-    internal void OnTurnResolve()
+    public void OnTurnAfterPlay()
     {
         if (IsRoundOver) return;
 
         var lastAgent = Chain.LastPlayedBy;
-        bool wasPass = _fsm.TurnFSM.LastActionWasPass;
-        bool wasClearHand = _fsm.TurnFSM.LastActionIsClearHand;
+        var lastPattern = Chain.LastPlayed;
+        if (lastAgent == null || lastPattern == null) return;
 
-        if (wasPass)
+        // 只有玩家出牌造成伤害
+        if (lastAgent is PlayerAgent player)
         {
-            _fsm.TurnTransitionTo<TurnAdvanceState>();
+            bool isClearHand = player.Hand.IsEmpty;
+            int damage = DamageCalculator.Calculate(
+                lastPattern, Chain.DepthMultiplier,
+                isWinningHand: false, isClearHand: isClearHand);
+
+            if (damage > 0)
+            {
+                ApplyDamageToEnemies(damage);
+            }
+
+            _lastPlayDamage = damage;
+            NotifyDamage(damage, TotalEnemyHP);
+
+            if (isClearHand)
+            {
+                Chain.ClearHandPlayed = true;
+                var drawn = player.Deck!.Draw(8);
+                player.Hand.AddRange(drawn);
+            }
         }
-        else if (wasClearHand && lastAgent is PlayerAgent)
-        {
-            var player = PlayerAgent!;
-            Chain.ClearHandPlayed = true;
-            var drawn = player.Deck!.Draw(8);
-            player.Hand.AddRange(drawn);
-            NotifyHandUpdated();
-            IsRoundOver = true;
-            _fsm.RaiseTurnComplete();
-        }
-        else
-        {
-            _fsm.TurnTransitionTo<TurnAdvanceState>();
-        }
+
+        NotifyHandUpdated();
     }
 
-    // ═══════════════════════════════════════════
-    //  Turn 回调 —— TurnAdvance
-    // ═══════════════════════════════════════════
+    /// <summary>
+    /// End：轮结束回调（预留效果触发）。
+    /// </summary>
+    public void OnTurnEnd()
+    {
+        // 预留：触发"轮结束"效果
+    }
 
     /// <summary>
-    /// Turn Advance：将当前 Agent 移到队尾（循环），回到 Judge。
+    /// 推进到下一 Agent，若只剩一个则结束回合。
     /// </summary>
-    internal void OnTurnAdvance()
+    public void AdvanceToNext()
     {
         if (IsRoundOver) return;
 
+        // 当前 Agent 移到队尾
         if (ActiveAgents.Count > 0)
         {
             var first = ActiveAgents[0];
@@ -484,7 +376,16 @@ public class Battle
             ActiveAgents.Add(first);
         }
 
-        _fsm.TurnTransitionTo<TurnJudgeState>();
+        // 只剩玩家一个 → 回合结束
+        if (ActiveAgents.Count == 1 && ActiveAgents[0] is PlayerAgent)
+        {
+            if (Chain.LastPlayedBy is PlayerAgent)
+            {
+                ApplyWinningHandBonus(_lastPlayDamage);
+            }
+            IsRoundOver = true;
+            _fsm.TurnFSM.CompleteTurn();
+        }
     }
 
     // ═══════════════════════════════════════════

@@ -109,8 +109,32 @@ public class EnemyAgent : Agent
     }
 
     // ═══════════════════════════════════════════
-    //  AI 决策（从 EnemyAI 迁入）
+    //  AI 决策
     // ═══════════════════════════════════════════
+
+    /// <summary>
+    /// AI 自动决策：搜索手牌 → 出牌或 Pass。返回是否出了牌。
+    /// </summary>
+    public bool DecideAndPlay()
+    {
+        if (Battle.Chain.LastPlayed == null)
+        {
+            // 敌人不能先手，直接 Pass
+            TryPass();
+            return false;
+        }
+
+        var pattern = FindBestPlay(Battle.Chain.LastPlayed);
+        if (pattern != null)
+        {
+            var cards = pattern.Cards;
+            TryPlayCards(cards);
+            return true;
+        }
+
+        TryPass();
+        return false;
+    }
 
     /// <summary>
     /// 在手牌中寻找能压制 target 的牌型。

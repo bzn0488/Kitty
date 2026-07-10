@@ -48,13 +48,15 @@ public class PlayerAgent : Agent
 
     /// <summary>
     /// 叫牌：抽 CardsPerCall 张，扣除一次叫牌次数。
-    /// 不可叫牌时返回空列表。
+    /// 不可叫牌时返回错误信息。
     /// </summary>
-    public List<Card> CallCards()
+    public string? TryCallCards()
     {
-        if (!CanCallCards) return new List<Card>();
+        if (!CanCallCards) return "叫牌次数已用完";
         RemainingCallCards--;
-        return Deck.Draw(CardsPerCall);
+        var drawn = Deck.Draw(CardsPerCall);
+        Hand.AddRange(drawn);
+        return null;
     }
 
     /// <summary>

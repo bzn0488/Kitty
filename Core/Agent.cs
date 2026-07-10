@@ -8,31 +8,58 @@ namespace GuandanKitty.Core;
 /// </summary>
 public abstract class Agent
 {
-    /// <summary>标识符</summary>
     public string Id { get; set; } = "";
-
-    /// <summary>手牌区</summary>
     public HandZone Hand { get; } = new();
-
-    /// <summary>所属 Battle</summary>
     public Battle Battle { get; }
-
-    /// <summary>本回合是否已 Pass</summary>
     public bool HasPassed { get; set; }
-
-    /// <summary>本回合是否仍在活跃</summary>
     public bool IsActive => !HasPassed;
-
-    /// <summary>是否已战败</summary>
     public abstract bool IsDefeated { get; }
 
-    /// <summary>
-    /// 创建 Agent 实例。
-    /// </summary>
     protected Agent(Battle battle, string id)
     {
         Battle = battle;
         Id = id;
+    }
+
+    // ═══════════════════════════════════════════
+    //  行动方法
+    // ═══════════════════════════════════════════
+
+    /// <summary>
+    /// 尝试出牌。验证牌型+压制 → 成功则扣手牌、写入牌河/Chain → null。
+    /// 失败返回错误信息。
+    /// </summary>
+    public string? TryPlayCards(List<Card> cards)
+    {
+        var pattern = CardPatternDetector.Detect(cards);
+        if (pattern == null) return "不是合法牌型";
+
+        if (!CanSuppressCurrent(pattern))
+            return "无法压制上一手牌";
+
+        Hand.Remove(cards);
+        Battle.River.Add(pattern, this);
+        Battle.Chain.RecordPlay(pattern, this);
+        return null;
+    }
+
+    /// <summary>
+    /// 检查能否压制当前 Chain.LastPlayed。
+    /// </summary>
+    public bool CanSuppressCurrent(CardPattern pattern)
+    {
+        if (Battle.Chain.LastPlayed == null) return true;
+        return SuppressionJudge.CanSuppress(pattern, Battle.Chain.LastPlayed);
+    }
+
+    /// <summary>
+    /// Pass：从活跃集合移除。
+    /// </summary>
+    public void TryPass()
+    {
+        HasPassed = true;
+        Battle.ActiveAgents.Remove(this);
+        Battle.Chain.RecordPass(this);
     }
 }
 
