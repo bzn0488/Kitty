@@ -38,9 +38,6 @@ public class Battle
     /// <summary>玩家输入是否启用</summary>
     public bool IsPlayerInputEnabled { get; private set; }
 
-    /// <summary>当前回合是否已结束（防止重复结算）</summary>
-    public bool IsRoundOver { get; private set; }
-
     /// <summary>当前战斗中 Agent（供 TurnFSM 状态访问）</summary>
     public static Battle Current { get; private set; } = null!;
 
@@ -255,19 +252,7 @@ public class Battle
     /// </summary>
     public bool JudgeTurn()
     {
-        if (IsRoundOver) return false;
-
-        if (ActiveAgents.Count == 1)
-        {
-            if (ActiveAgents[0] is PlayerAgent && Chain.LastPlayedBy is PlayerAgent)
-            {
-                ApplyWinningHandBonus(_lastPlayDamage);
-            }
-            IsRoundOver = true;
-            return false;
-        }
-
-        return ActiveAgents.Count > 0;
+        return ActiveAgents.Count > 1;
     }
 
     /// <summary>
@@ -275,8 +260,6 @@ public class Battle
     /// </summary>
     public void OnTurnStart()
     {
-        if (IsRoundOver) return;
-
         var agent = ActiveAgents.FirstOrDefault();
         if (agent == null) return;
 
@@ -299,8 +282,6 @@ public class Battle
     /// </summary>
     public void OnTurnStartUpdate(float delta)
     {
-        if (IsRoundOver) return;
-
         var agent = ActiveAgents.FirstOrDefault();
         if (agent == null || agent is PlayerAgent || _turnEnemyActed) return;
 
@@ -331,8 +312,6 @@ public class Battle
     /// </summary>
     public void OnTurnAfterPlay()
     {
-        if (IsRoundOver) return;
-
         var lastAgent = Chain.LastPlayedBy;
         var lastPattern = Chain.LastPlayed;
         if (lastAgent == null || lastPattern == null) return;
@@ -377,8 +356,6 @@ public class Battle
     /// </summary>
     public void AdvanceToNext()
     {
-        if (IsRoundOver) return;
-
         if (ActiveAgents.Count > 0)
         {
             var first = ActiveAgents[0];
@@ -439,7 +416,6 @@ public class Battle
     {
         River.Clear();
         Chain.Reset();
-        IsRoundOver = false;
 
         ActiveAgents.Clear();
         foreach (var agent in Agents)
@@ -474,6 +450,12 @@ public class Battle
     /// <summary>处理玩家获胜：通知结果，检查是否终结战斗</summary>
     private void HandlePlayerWin()
     {
+        // 赢回合 ×2 补算
+        if (Chain.LastPlayedBy is PlayerAgent)
+        {
+            ApplyWinningHandBonus(_lastPlayDamage);
+        }
+
         NotifyRoundResult(true, $"你赢得了本回合！剩余 HP: {TotalEnemyHP}");
 
         if (TotalEnemyHP <= 0)
