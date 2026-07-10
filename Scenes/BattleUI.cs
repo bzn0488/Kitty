@@ -30,6 +30,7 @@ public partial class BattleUI : Control
     // ═══════════════════════════════════════════
 
     private PlayerAgent? _playerAgent;
+    private EnemyAgent? _enemyAgent;
     private int _deckCount;
     private int _remainingCallCards;
     private int _chainDepthMultiplier;
@@ -46,6 +47,7 @@ public partial class BattleUI : Control
     private Label? _riverLabel;
 
     [Export] private HBoxContainer? _playerHand;
+    [Export] private HBoxContainer? _enemyHand;
     private Button? _playBtn;
     private Button? _callBtn;
     private Button? _passBtn;
@@ -57,6 +59,7 @@ public partial class BattleUI : Control
     {
         _cardUiScene = ResourceLoader.Load<PackedScene>("res://Scenes/CardUI.tscn");
         _playerHand?.GetChildren().ToList().ForEach(c => c.QueueFree());
+        _enemyHand?.GetChildren().ToList().ForEach(c => c.QueueFree());
         BuildUI();
         Run.Instance.StartBattle(this);
     }
@@ -67,6 +70,14 @@ public partial class BattleUI : Control
     public void SetPlayerAgent(PlayerAgent agent)
     {
         _playerAgent = agent;
+    }
+
+    /// <summary>
+    /// 设置敌方 Agent 引用（由 Battle 在初始化时调用）。
+    /// </summary>
+    public void SetEnemyAgent(EnemyAgent agent)
+    {
+        _enemyAgent = agent;
     }
 
     /// <summary>
@@ -253,6 +264,14 @@ public partial class BattleUI : Control
         UpdateEnemyHandDisplay();
     }
 
+    /// <summary>
+    /// 更新敌方手牌显示（由 Battle 调用）。
+    /// </summary>
+    public void OnEnemyHandUpdated()
+    {
+        RefreshEnemyHandDisplay();
+    }
+
     // ═══════════════════════════════════════════
     //  UI 刷新
     // ═══════════════════════════════════════════
@@ -290,6 +309,34 @@ public partial class BattleUI : Control
             _callCardCount.Text = $"📞 叫牌剩余: {_remainingCallCards}";
         if (_chainDepth != null)
             _chainDepth.Text = $"⛓️ 接龙深度: ×{_chainDepthMultiplier} (第{_chainPlayerHandCount + 1}手)";
+    }
+
+    /// <summary>
+    /// 刷新敌方手牌区：清空、重新生成 CardUi、排序。
+    /// </summary>
+    private void RefreshEnemyHandDisplay()
+    {
+        if (_enemyAgent == null || _enemyHand == null) return;
+
+        foreach (var child in _enemyHand.GetChildren())
+            child.QueueFree();
+
+        if (_cardUiScene == null) return;
+
+        var cardUis = new List<CardUi>();
+        foreach (var card in _enemyAgent.Hand.Cards)
+        {
+            var cardUi = _cardUiScene.Instantiate<CardUi>();
+            cardUi.SetCard(card);
+            cardUis.Add(cardUi);
+        }
+
+        SortHand(cardUis);
+
+        foreach (var cardUi in cardUis)
+        {
+            _enemyHand.AddChild(cardUi);
+        }
     }
 
     /// <summary>

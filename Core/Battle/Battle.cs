@@ -77,6 +77,7 @@ public class Battle
 
         // 设置 UI 数据引用
         _ui.SetPlayerAgent(PlayerAgent!);
+        _ui.SetEnemyAgent(Agents.OfType<EnemyAgent>().First());
 
         _ui.PlayRequested += OnPlayRequested;
         _ui.PassRequested += OnPassRequested;
@@ -142,6 +143,7 @@ public class Battle
         DrawEnemyInitialHands();
         DrawStartHand();
         NotifyHandUpdated();
+        NotifyEnemyHandUpdated();
         _fsm.TransitionTo<RoundStartState>();
     }
 
@@ -189,6 +191,7 @@ public class Battle
         ShuffleRiverBackToDeck();
         EnemyGrowthDraw();
         NotifyHandUpdated();
+        NotifyEnemyHandUpdated();
         NotifyRiverUpdated();
     }
 
@@ -320,6 +323,7 @@ public class Battle
                 Chain.RecordPlay(pattern, agent);
                 NotifyAgentPlayed(agent.Id, pattern.ToString(), pattern.CardCount);
                 NotifyRiverUpdated();
+                NotifyEnemyHandUpdated();
                 _fsm.TurnFSM.LastActionWasPass = false;
                 _fsm.TurnFSM.LastActionPattern = pattern;
             }
@@ -697,6 +701,12 @@ public class Battle
             player?.RemainingCallCards ?? 0,
             Chain.DepthMultiplier,
             Chain.PlayerHandCount);
+    }
+
+    /// <summary>通知敌方手牌刷新</summary>
+    public void NotifyEnemyHandUpdated()
+    {
+        _ui.OnEnemyHandUpdated();
     }
 
     /// <summary>通知牌河刷新</summary>

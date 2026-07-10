@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cfuvdo8n34iu8" path="res://Resources/Table.png" id="2_bg"]
 [ext_resource type="PackedScene" uid="uid://bcf6xt6y4ienp" path="res://Scenes/CardUI.tscn" id="3_b2eky"]
 
-[node name="BattleScene" type="Control" unique_id=224493377 node_paths=PackedStringArray("_playerHand")]
+[node name="BattleScene" type="Control" unique_id=224493377 node_paths=PackedStringArray("_playerHand", "_enemyHand")]
 custom_minimum_size = Vector2(1920, 1080)
 layout_mode = 3
 anchors_preset = 15
@@ -14,6 +14,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ui")
 _playerHand = NodePath("PlayerHand")
+_enemyHand = NodePath("EnemyHand")
 
 [node name="TableBackGround" type="TextureRect" parent="." unique_id=857183747]
 custom_minimum_size = Vector2(1920, 1080)
@@ -46,4 +47,24 @@ metadata/_edit_group_ = true
 layout_mode = 2
 
 [node name="Card" parent="PlayerHand" unique_id=1364908675 instance=ExtResource("3_b2eky")]
+layout_mode = 2
+
+[node name="EnemyHand" type="HBoxContainer" parent="." unique_id=210316620]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -247.75
+offset_top = 51.0
+offset_right = 247.75
+offset_bottom = 241.0
+grow_horizontal = 2
+theme_override_constants/separation = -95
+alignment = 1
+metadata/_edit_group_ = true
+
+[node name="Card2" parent="EnemyHand" unique_id=1812208526 instance=ExtResource("3_b2eky")]
+layout_mode = 2
+
+[node name="Card" parent="EnemyHand" unique_id=1606520016 instance=ExtResource("3_b2eky")]
 layout_mode = 2
