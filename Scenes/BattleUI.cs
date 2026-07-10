@@ -50,13 +50,13 @@ public partial class BattleUI : Control
     private Button? _callBtn;
     private Button? _passBtn;
 
-    private readonly List<CardUi> _cardUiList = new();
     private readonly HashSet<Card> _selectedCards = new();
     private PackedScene? _cardUiScene;
 
     public override void _Ready()
     {
         _cardUiScene = ResourceLoader.Load<PackedScene>("res://Scenes/CardUI.tscn");
+        _playerHand?.GetChildren().ToList().ForEach(c => c.QueueFree());
         BuildUI();
         Run.Instance.StartBattle(this);
     }
@@ -261,19 +261,26 @@ public partial class BattleUI : Control
     {
         if (_playerAgent == null || _playerHand == null) return;
 
-        foreach (var cui in _cardUiList) cui.QueueFree();
-        _cardUiList.Clear();
+        foreach (var child in _playerHand.GetChildren())
+            child.QueueFree();
         _selectedCards.Clear();
 
         if (_cardUiScene != null)
         {
+            var cardUis = new List<CardUi>();
             foreach (var card in _playerAgent.Hand.Cards)
             {
                 var cardUi = _cardUiScene.Instantiate<CardUi>();
-                _playerHand.AddChild(cardUi);
                 cardUi.SetCard(card);
                 cardUi.CardToggled += OnCardToggled;
-                _cardUiList.Add(cardUi);
+                cardUis.Add(cardUi);
+            }
+
+            SortHand(cardUis);
+
+            foreach (var cardUi in cardUis)
+            {
+                _playerHand.AddChild(cardUi);
             }
         }
 
@@ -284,6 +291,35 @@ public partial class BattleUI : Control
         if (_chainDepth != null)
             _chainDepth.Text = $"⛓️ 接龙深度: ×{_chainDepthMultiplier} (第{_chainPlayerHandCount + 1}手)";
     }
+
+    /// <summary>
+    /// 整理手牌：按点数从大到小，同点数按 ♥♠♦♣ 排列。
+    /// </summary>
+    private static void SortHand(List<CardUi> cardUis)
+    {
+        cardUis.Sort((a, b) =>
+        {
+            var ca = a.Card;
+            var cb = b.Card;
+            if (ca == null || cb == null) return 0;
+
+            // 点数降序
+            int valueCmp = cb.FaceValue.CompareTo(ca.FaceValue);
+            if (valueCmp != 0) return valueCmp;
+
+            // 同点数按花色：♥ > ♠ > ♦ > ♣
+            return GetSuitOrder(ca.Suit).CompareTo(GetSuitOrder(cb.Suit));
+        });
+    }
+
+    private static int GetSuitOrder(Suit suit) => suit switch
+    {
+        Suit.Heart   => 0,
+        Suit.Spade   => 1,
+        Suit.Diamond => 2,
+        Suit.Club    => 3,
+        _ => 4
+    };
 
     private void UpdateRiverDisplay()
     {
