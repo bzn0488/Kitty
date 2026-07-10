@@ -276,9 +276,9 @@ public partial class BattleUI : Control
             foreach (var card in _playerAgent.Hand.Cards)
             {
                 var cardUi = _cardUiScene.Instantiate<CardUi>();
+                _playerHand.AddChild(cardUi);
                 cardUi.SetCard(card);
                 cardUi.CardToggled += OnCardToggled;
-                _playerHand.AddChild(cardUi);
                 _cardUiList.Add(cardUi);
             }
         }
