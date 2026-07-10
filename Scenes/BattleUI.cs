@@ -225,7 +225,7 @@ public partial class BattleUI : Control
         var backBtn = new Button { Text = "返回主菜单" };
         backBtn.SetPosition(new Vector2(640, 450));
         backBtn.SetSize(new Vector2(200, 50));
-        backBtn.Pressed += () => GetTree().ChangeSceneToFile("res://Scenes/MainScene.tscn");
+        backBtn.Pressed += () => UIRoot.Instance.LoadMainScene();
         AddChild(backBtn);
     }
 
