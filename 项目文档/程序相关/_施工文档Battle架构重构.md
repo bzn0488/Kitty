@@ -265,13 +265,13 @@ Battle（纯 C#）
 TurnJudge（当前 Agent = ActiveAgents[i]）
   │
   ├─ ActiveAgents.Count == 1
-  │    ├─ 唯一 Agent 是玩家 → 继续 TurnAct（允许自压）
+  │    ├─ 唯一 Agent 是玩家 → 玩家获胜（敌无力回应，直接结算）
   │    └─ 唯一 Agent 是敌人 → 回合结束，进 Settlement
   │
   └─ ActiveAgents.Count > 1 → TurnAct（正常出牌/Pass）
 ```
 
-### 9.3 自压场景示例
+### 9.3 回合结算流程（无自压）
 
 ```
 ActiveAgents = [玩家, 敌人]
@@ -280,18 +280,12 @@ ActiveAgents = [玩家, 敌人]
                                           ↓
                                    玩家是唯一活跃者
                                           ↓
-                                    继续玩家 Turn（自压机会）
-                                          ↓
-                              玩家出 ♠K 压自己的 ♠5
-                                          ↓
-                              玩家仍是唯一活跃者 → 可继续自压
-                                          ↓
-                              玩家 Pass → 回合结束 → 玩家赢
+                                   玩家获胜 → 回合结算
 ```
 
 ### 9.4 对应 GDD 规则
 - "敌人 Pass → 控制权交还玩家，回合不结束" ✅
-- "玩家可继续用同牌型更大数值压制自己"（自压）✅
+- "任何一方 Pass → 回合结束" ✅
 - "玩家 Pass → 回合结束（仅有玩家有权终结回合）" ✅
 ---
 
@@ -303,7 +297,7 @@ ActiveAgents = [玩家, 敌人]
 |:--:|------|:--:|------|
 | 1 | `Core/Battle/TurnFSM.cs` | **重写** | 去掉 Battle 引用，通过 event 与外部通信 |
 | 2 | `Core/Battle/BattleFSM.cs` | **重写** | 去掉 `: Node`，纯 C#；持有 TurnFSM，订阅其事件 |
-| 3 | `Core/Battle/Battle.cs` | **重写** | 去掉 `: Node`，纯 C#；ActiveAgents；自压特例 |
+| 3 | `Core/Battle/Battle.cs` | **重写** | 去掉 `: Node`，纯 C#；ActiveAgents；无自压 |
 | 4 | `Scenes/BattleUI.cs` | **修改** | 去掉 `_battle`，改为 `event Action` |
 | 5 | `Core/Run/Run.cs` | **修改** | 创建/驱动/销毁 Battle |
 | 6 | `Scenes/BattleScene.tscn` | **修改** | 去掉 Battle 节点 |
@@ -325,7 +319,7 @@ ActiveAgents = [玩家, 敌人]
 - 去掉 `: Node`，纯 C# 类
 - 构造函数接收 `(StandardDeck, BattleUI)`
 - 新增 `ActiveAgents` 集合，Round 开始全员加入，Pass 即移除
-- TurnJudge 实现自压特例
+- TurnJudge 实现无自压回合结算
 - 去掉 `public TurnFSM Turn`、`ExitTurn()`、`_turnResolvedXxx` 等
 
 ### 10.5 Phase 4: BattleUI 修改
@@ -352,7 +346,7 @@ ActiveAgents = [玩家, 敌人]
 |------|------|
 | `Core/Battle/TurnFSM.cs` | 重写：去掉 Battle 依赖，9 个 event + TurnComplete |
 | `Core/Battle/BattleFSM.cs` | 重写：去掉 Node，纯 C#，持有 TurnFSM，订阅事件 |
-| `Core/Battle/Battle.cs` | 重写：去掉 Node，纯 C#，ActiveAgents 集合，自压特例 |
+| `Core/Battle/Battle.cs` | 重写：去掉 Node，纯 C#，ActiveAgents 集合，无自压 |
 | `Scenes/BattleUI.cs` | 修改：event 驱动输入，去掉 _battle 引用 |
 | `Core/Run/Run.cs` | 修改：创建/驱动/销毁 Battle，_Process 驱动 |
 | `Scenes/MainScene.cs` | 修改：创建 BattleUI，注册到 Run |
@@ -364,7 +358,7 @@ ActiveAgents = [玩家, 敌人]
 | A 架构级（Battle/FSM 去 Node） | 8 | ✅ |
 | B 职责边界 | 3 | ✅ |
 | C 数据流/调用链 | 4 | ✅ |
-| D 规则实现（ActiveAgents + 自压） | 3 | ✅ |
+| D 规则实现（ActiveAgents + 无自压） | 3 | ✅ |
 
 ### 已知后续工作
 - B4/B5：敌人 AI 计时器和回合延时仍在 Battle 中，可迁至表现层
