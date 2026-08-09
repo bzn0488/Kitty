@@ -248,9 +248,9 @@ public partial class BattleUI : Control
             _enemyHP.Text = $"❤️ 敌人 HP: {totalHP}";
     }
 
-    public void OnPlayerInputChanged(bool enabled)
+    public void OnPlayerInputChanged(bool enabled, bool canPass)
     {
-        EnableButtons(enabled);
+        EnableButtons(enabled, canPass);
     }
 
     /// <summary>
@@ -393,12 +393,12 @@ public partial class BattleUI : Control
             _enemyHandLabel.Text = _enemyHandText;
     }
 
-    private void EnableButtons(bool enabled)
+    private void EnableButtons(bool enabled, bool canPass = true)
     {
         if (_playBtn != null) _playBtn.Disabled = !enabled;
         if (_callBtn != null)
             _callBtn.Disabled = !enabled || (_playerAgent != null && !_playerAgent.CanCallCards);
-        if (_passBtn != null) _passBtn.Disabled = !enabled;
+        if (_passBtn != null) _passBtn.Disabled = !enabled || !canPass;
     }
 
     private static Label MakeLabel(string text, int fontSize)

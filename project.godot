@@ -15,6 +15,10 @@ run/main_scene="uid://datdvh5oiahi5"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
+
 [debug]
 
 display_fps=true
@@ -31,6 +35,10 @@ window/position/centered=true
 [dotnet]
 
 project/assembly_name="GuandanKitty"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot_ai/plugin.cfg")
 
 [physics]
 

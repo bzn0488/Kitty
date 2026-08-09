@@ -53,13 +53,16 @@ public abstract class Agent
     }
 
     /// <summary>
-    /// Pass：从活跃集合移除。
+    /// Pass：从活跃集合移除。先手（本回合尚未有人出牌）不允许 Pass，返回错误信息。
     /// </summary>
-    public void TryPass()
+    public string? TryPass()
     {
+        if (Battle.Chain.LastPlayed == null)
+            return "先手必须出牌，不能跳过";
         HasPassed = true;
         Battle.ActiveAgents.Remove(this);
         Battle.Chain.RecordPass(this);
+        return null;
     }
 }
 

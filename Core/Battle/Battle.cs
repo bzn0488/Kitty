@@ -138,7 +138,13 @@ public class Battle
         var player = PlayerAgent;
         if (player == null) return;
 
-        player.TryPass();
+        var err = player.TryPass();
+        if (err != null)
+        {
+            NotifyStatus(err);
+            return;
+        }
+
         NotifyAgentPassed(player.Id);
         _fsm.TurnFSM.TransitionTo<TurnEndState>();
     }
@@ -156,7 +162,7 @@ public class Battle
         }
 
         NotifyHandUpdated();
-        _fsm.TurnFSM.TransitionTo<TurnEndState>();
+        // 叫牌不推进状态机：玩家仍处于行动阶段，可继续出牌 / 叫牌 / 跳过
     }
 
     // ═══════════════════════════════════════════
@@ -210,11 +216,11 @@ public class Battle
     //  FSM 回调 —— RoundEnd
     // ═══════════════════════════════════════════
 
-    /// <summary>回合结束：牌河洗回牌堆，敌人成长抽牌</summary>
+    /// <summary>回合结束：清理牌河（玩家牌洗回牌堆、敌人牌丢弃），敌人成长抽牌</summary>
     internal void OnRoundEnd()
     {
         _roundEndDelay = 0.5f;
-        ShuffleRiverBackToDeck();
+        CleanupRiver();
         EnemyGrowthDraw();
         NotifyHandUpdated();
         NotifyEnemyHandUpdated();
@@ -265,8 +271,10 @@ public class Battle
 
         if (agent is PlayerAgent)
         {
-            EnablePlayerInput(true);
-            NotifyStatus("请出牌或跳过");
+            // 先手（本回合尚无人出牌）不允许跳过，需强制领出
+            bool canPass = Chain.LastPlayed != null;
+            EnablePlayerInput(true, canPass);
+            NotifyStatus(canPass ? "请出牌或跳过" : "你是先手，请出牌");
         }
         else
         {
@@ -496,11 +504,17 @@ public class Battle
     //  私有方法 —— RoundEnd
     // ═══════════════════════════════════════════
 
-    /// <summary>将牌河中所有牌洗回玩家牌堆</summary>
-    private void ShuffleRiverBackToDeck()
+    /// <summary>
+    /// 清理牌河：玩家打出的牌洗回玩家牌堆；敌人打出的牌直接丢弃
+    /// （敌方牌来自怪物无限牌池，若洗回玩家牌堆会污染牌堆数据）。
+    /// </summary>
+    private void CleanupRiver()
     {
-        var allCards = River.GetAllCards();
-        PlayerAgent?.Deck?.ShuffleBack(allCards);
+        var playerCards = River.Entries
+            .Where(e => e.Agent is PlayerAgent)
+            .SelectMany(e => e.Cards)
+            .ToList();
+        PlayerAgent?.Deck?.ShuffleBack(playerCards);
         River.Clear();
     }
 
@@ -544,11 +558,13 @@ public class Battle
         _ui.OnEnemyHpChanged(TotalEnemyHP);
     }
 
-    /// <summary>启用/禁用玩家输入</summary>
-    public void EnablePlayerInput(bool enabled)
+    /// <summary>
+    /// 启用/禁用玩家输入。canPass=false 时禁用跳过按钮（先手必须出牌）。
+    /// </summary>
+    public void EnablePlayerInput(bool enabled, bool canPass = true)
     {
         IsPlayerInputEnabled = enabled;
-        _ui.OnPlayerInputChanged(enabled);
+        _ui.OnPlayerInputChanged(enabled, canPass);
     }
 
     // ═══════════════════════════════════════════

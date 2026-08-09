@@ -119,8 +119,14 @@ public class EnemyAgent : Agent
     {
         if (Battle.Chain.LastPlayed == null)
         {
-            // 敌人不能先手，直接 Pass
-            TryPass();
+            // 防御分支：玩家每回合被强制领出（先手不可 Pass），敌人不会成为先手。
+            // 若规则被破坏意外到达此处，领出最小的单张以避免卡死。
+            var lead = Hand.Cards.OrderBy(c => c.FaceValue).FirstOrDefault();
+            if (lead != null)
+            {
+                TryPlayCards(new List<Card> { lead });
+                return true;
+            }
             return false;
         }
 
